@@ -1,6 +1,6 @@
 # Semantic-CV - a schema.org/Person based CV Generator
 
-Semantic‑CV is a minimal, idiomatic convention for expressing CV data using the global standard .
+Semantic‑CV is a minimal, idiomatic convention for expressing CV data using the global standard [schema.org/Person](https://schema.org/Person).
 It does not introduce a new schema. Instead, it applies existing fields consistently and adds only a few carefully chosen extensions.
 
 The goal is a future‑proof, machine‑readable, deterministic CV format that can be rendered into clean, professional documents — without lock‑in, bloat, or proprietary structures.
@@ -12,7 +12,7 @@ The goal is a future‑proof, machine‑readable, deterministic CV format that c
 - Normalize CVs (sort experience, correct types, trim fields, enforce conventions)
 - Watch mode for continuous validation
 - HTML rendering via templates
-- Zero runtime dependencies
+- Minimal runtime dependencies
 - Deterministic, reproducible output
 
 
@@ -52,6 +52,7 @@ Semantic‑CV is built on four principles:
 **Be minimal**   
 - Only the fields needed to express CV data
 - No plugins, no extensions, no ecosystem sprawl
+- Minimal dependencies — only essential, stable libraries like semver or HTML rewriting primitives.
 
 **Be deterministic**   
 - Predictable, reproducible output
