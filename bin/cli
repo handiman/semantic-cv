@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+import analyze from "../dist/cli/analyze.js";
+import init from "../dist/cli/init.js";
+import add from "../dist/cli/add.js";
+import set from "../dist/cli/set.js";
+import convert from "../dist/cli/convert.js";
+import doctor from "../dist/cli/doctor.js";
+import render from "../dist/cli/render.js";
+import watch from "../dist/cli/watch.js";
+import help from "../dist/cli/help.js";
+
+const main = async () => {
+  const args = process.argv.slice(2);
+  const [command] = args;
+  switch (command) {
+    case "init":
+      await init(args);
+      return;
+    case "add":
+      await add(args);
+      return;
+    case "set":
+      await set(args);
+      return;
+    case "analyze":
+      await analyze(args);
+      return;
+    case "doctor":
+      await doctor(args);
+      return;
+    case "watch":
+      await watch(args);
+      return;
+    case "render":
+      await render(args);
+      return;
+    case "convert":
+      await convert(args);
+      return;
+    case "-h":
+    case "--help":
+    case "help":
+    default:
+      console.log(help);
+      return;
+  }
+};
+
+main();
