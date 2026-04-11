@@ -32,8 +32,10 @@ export async function renderFile(args: Array<string>) {
     person,
     Writable.toWeb(fs.createWriteStream(`${fileName}.txt`)),
   );
-  await renderHTML(
-    {
+
+  const writer = fs.createWriteStream(`${fileName}.html`);
+  writer.write(
+    await renderHTML({
       person,
       theme: {
         name: theme,
@@ -41,9 +43,9 @@ export async function renderFile(args: Array<string>) {
         css: fs.readFileSync(cssPath).toString(),
         js: fs.readFileSync(jsPath).toString(),
       },
-    },
-    Writable.toWeb(fs.createWriteStream(`${fileName}.html`)),
+    }),
   );
+  writer.close();
 }
 
 export default renderFile;
