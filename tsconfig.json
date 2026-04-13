@@ -10,6 +10,8 @@
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
         "useDefineForClassFields": false,
+        "allowJs": true,
+        "checkJs": false,
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "outDir": "./dist",

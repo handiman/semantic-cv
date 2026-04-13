@@ -2,11 +2,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { loadFromFile, defaults } from "../index.js";
 import { renderATS } from "../core/render/ats.js";
-import { renderHTML } from "../core/render/html.js";
+import { renderHTML, renderHTMLNew } from "../core/render/html.js";
 import { Writable } from "node:stream";
 import { HTMLTransformer } from "../core/transform.js";
 import { HTMLRewriter } from "html-rewriter-wasm";
 import { BoilingDieselTheme } from "../themes/boiling-diesel/index.js";
+import { Person, Theme, ThemeLoader } from "../themes/index.js";
 
 type Hook = {
   selector: string;
@@ -66,22 +67,43 @@ const loadAsset = (assetName: string) => {
   return Promise.resolve(asset);
 };
 
-const tryNewWay = async (person: any, template: string) => {
-  const theme = new BoilingDieselTheme(() => new NodeTransformer(), loadAsset);
+const tryNewWay = async (
+  person: any,
+  template: string,
+  transformer: HTMLTransformer,
+) => {
+  transformer
+    .on(`head script[type="module"]`, {
+      element(script: any) {
+        script.replace(`<script type="module">${themeJS}</script>`, {
+          html: true,
+        });
+      },
+    })
+    .on(`head style`, {
+      element(style: any) {
+        style.replace(`<style type="text/css">${themeCSS}</style>`, {
+          html: true,
+        });
+      },
+    })
+    .on(`body`, {
+      element(body: any) {
+        body.prepend(
+          `\n\t<semantic-cv-theme-${theme.name}></semantic-cv-theme-${theme.name}>`,
+          { html: true },
+        );
+        body.prepend(themeHTML, { html: true });
+      },
+    });
+  const theme = new BoilingDieselTheme(transformer, loadAsset);
   const themeHTML = await theme.renderHTML(person);
-  const transformer = new NodeTransformer().on("body", {
-    element(body: any) {
-      body.prepend(
-        `\n\t<semantic-cv-theme-${theme.name}></semantic-cv-theme-${theme.name}>`,
-        { html: true },
-      );
-      body.prepend(themeHTML, { html: true });
-    },
-  });
+  const themeCSS = await theme.renderCSS(person);
+  const themeJS = await theme.renderJS(person);
   return await transformer.transform(template);
 };
 
-export async function renderFile(args: Array<string>) {
+export async function renderFile_old(args: Array<string>) {
   const [, theme, file] = args;
   const fileName = file ?? defaults.fileName;
   const themeRoot = resolveThemeRoot();
@@ -122,8 +144,14 @@ export async function renderFile(args: Array<string>) {
   const writer = fs.createWriteStream(`${fileName}.html`);
 
   if ("boiling-diesel" === theme) {
-    const transformedHTML = await tryNewWay(person, template);
-    writer.write(transformedHTML);
+    writer.write(
+      await renderHTMLNew({
+        person,
+        template,
+        theme: new BoilingDieselTheme(transformer, loadAsset),
+        transformer,
+      }),
+    );
   } else {
     writer.write(
       await renderHTML({
@@ -143,4 +171,56 @@ export async function renderFile(args: Array<string>) {
   writer.close();
 }
 
+const loadTemplate = () => {
+  const themeRoot = resolveThemeRoot();
+  const templatePath = path.join(themeRoot, "template.html");
+  if (fs.existsSync(templatePath)) {
+    return fs.readFileSync(templatePath).toString();
+  }
+  throw new Error(`${path.basename(templatePath)} not found`);
+};
+
+const loadPerson = (fileName: string) => {
+  if (fs.existsSync(fileName)) {
+    return new Person(loadFromFile(fileName)());
+  }
+  throw new Error(`${path.basename(fileName)} not found`);
+};
+
+export async function renderFile(args: Array<string>) {
+  const [, themeName, file] = args;
+  const fileName = file ?? defaults.fileName;
+  const person = loadPerson(file ?? defaults.fileName);
+  const renderHtml = async () => {
+    const template = loadTemplate();
+    const transformer = new NodeTransformer().on("body", {
+      element(body: any) {
+        body.prepend(
+          `<semantic-cv-theme-${theme}</semantic-cv-theme-${theme}>`,
+          {
+            html: true,
+          },
+        );
+      },
+    });
+    const loader = new ThemeLoader(transformer, loadAsset);
+    const theme = loader.loadTheme(themeName);
+    const writer = fs.createWriteStream(`${fileName}.html`);
+    writer.write(
+      await renderHTMLNew({
+        person,
+        template,
+        theme,
+        transformer,
+      }),
+    );
+    writer.close();
+  };
+
+  await renderHtml();
+  await renderATS(
+    person,
+    Writable.toWeb(fs.createWriteStream(`${fileName}.txt`)),
+  );
+}
 export default renderFile;
