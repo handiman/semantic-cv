@@ -101,33 +101,30 @@ export default () => {
     });
   });
 
-  describe("sorts in alphabetical order", () => {
-    test("sameAs", () => {
-      const { sameAs } = normalize({
-        sameAs: ["https://B", "https://a"],
-      });
-      assert.deepStrictEqual(["https://a", "https://B"], sameAs);
-    });
-    test("skills", () => {
-      const { skills } = normalize({
-        skills: ["skills B", "skills a"],
-      });
-      assert.deepStrictEqual(["skills a", "skills B"], skills);
-    });
-    test("knowsAbout", () => {
-      const { knowsAbout } = normalize({
-        knowsAbout: ["thing B", "thing a"],
-      });
-      assert.deepStrictEqual(["thing a", "thing B"], knowsAbout);
-    });
-  });
-
   describe("does not sort", () => {
     test("knowsLanguage", () => {
       const { knowsLanguage } = normalize({
         knowsLanguage: ["Swedish", "English"],
       });
       assert.deepStrictEqual(["Swedish", "English"], knowsLanguage);
+    });
+    test("sameAs", () => {
+      const { sameAs } = normalize({
+        sameAs: ["https://B", "https://a"],
+      });
+      assert.deepStrictEqual(["https://B", "https://a"], sameAs);
+    });
+    test("skills", () => {
+      const { skills } = normalize({
+        skills: ["skills B", "skills a"],
+      });
+      assert.deepStrictEqual(["skills B", "skills a"], skills);
+    });
+    test("knowsAbout", () => {
+      const { knowsAbout } = normalize({
+        knowsAbout: ["thing B", "thing a"],
+      });
+      assert.deepStrictEqual(["thing B", "thing a"], knowsAbout);
     });
   });
 };
