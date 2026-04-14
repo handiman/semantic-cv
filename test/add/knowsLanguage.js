@@ -2,7 +2,6 @@ import assert from "node:assert";
 import { beforeEach, describe, test } from "node:test";
 import FakePrompt from "../prompt.js";
 import addKnowsLanguage from "../../dist/cli/add/knowsLanguage.js";
-import knowsLanguage from "../../dist/cli/add/knowsLanguage.js";
 
 export default () =>
   describe("knowsLanguage", () => {
