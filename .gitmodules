@@ -1,6 +1,6 @@
-[submodule "src/core"]
-	path = src/core
-	url = https://github.com/handiman/semantic-cv-core.git
 [submodule "src/themes"]
 	path = src/themes
 	url = https://github.com/handiman/semantic-cv-themes.git
+[submodule "src/core"]
+	path = src/core
+	url = https://github.com/handiman/semantic-cv-core.git
