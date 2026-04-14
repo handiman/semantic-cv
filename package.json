@@ -1,0 +1,65 @@
+{
+  "name": "semantic-cv",
+  "version": "0.1.0",
+  "description": "A schema.org‑first CV generator for developers.",
+  "license": "MIT",
+  "author": "Henrik Becker",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/handiman/semantic-cv.git"
+  },
+  "bugs": {
+    "url": "https://github.com/handiman/semantic-cv/issues"
+  },
+  "homepage": "https://semantic.cv",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "bin": {
+    "semantic-cv": "bin/cli"
+  },
+  "scripts": {
+    "format": "prettier --write .",
+    "clean": "rimraf dist",
+    "watch": "npm run build && jsonld-cv watch",
+    "build": "npm run clean && tsc --project tsconfig.json && node scripts/copy-themes.js && node scripts/clean-dist.js",
+    "pack": "npm run build && npm pack",
+    "test": "npm run clean && npm run build && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-results.xml \"./test/**/*.test.js\" && npm run test:results",
+    "test:results": "xunit-viewer -r test-results.xml -o test-results.html"
+  },
+  "files": [
+    "dist/",
+    "bin/",
+    "sample.cv.json",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "cv",
+    "resume",
+    "schema.org",
+    "json-ld",
+    "cli",
+    "developer-tools",
+    "semantic-web",
+    "structured-data",
+    "jsonresume"
+  ],
+  "devDependencies": {
+    "@types/node": "25.3.1",
+    "@types/prompts": "2.4.9",
+    "@typescript-eslint/eslint-plugin": "^8.58.2",
+    "@typescript-eslint/parser": "^8.58.2",
+    "prettier": "^3.8.2",
+    "rimraf": "6.1.3",
+    "tsx": "4.21.0",
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "html-rewriter-wasm": "^0.4.1"
+  }
+}

@@ -1,0 +1,180 @@
+name: CI/CD
+on:
+  workflow_dispatch:
+  push:
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
+      - run: node -v
+
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.SUBMODULE_TOKEN }}
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Run tests
+        continue-on-error: true
+        run: |
+          npm ci
+          npm install -g xunit-viewer jsdom
+          npm run test
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: test-results.*
+
+  release:
+    needs: [test]
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master'
+    steps:
+      - run: node -v
+
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Debug tags
+        run: git tag -l
+
+      # 1) Get last tag
+      - name: Get last tag
+        id: lasttag
+        run: |
+          TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      # 2) Read version from package.json
+      - name: Read package.json version
+        id: pkg
+        run: |
+          PKG_VERSION=$(node -p "require('./package.json').version")
+          echo "version=$PKG_VERSION" >> $GITHUB_OUTPUT
+
+      # 3) Get commit message
+      - name: Get commit message
+        id: commit
+        run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+
+      # 4) Determine bump type
+      - name: Determine bump type
+        id: bump
+        run: |
+          MSG="${{ steps.commit.outputs.msg }}"
+          if echo "$MSG" | grep -qiE "BREAKING[ -]CHANGE:" || echo "$MSG" | grep -qE "^[a-zA-Z]+(\(.+\))?!:"; then
+            echo "type=major" >> $GITHUB_OUTPUT
+          elif [[ "$MSG" =~ ^feat(\(.+\))?: ]]; then
+            echo "type=minor" >> $GITHUB_OUTPUT
+          elif [[ "$MSG" =~ ^fix(\(.+\))?: ]]; then
+            echo "type=patch" >> $GITHUB_OUTPUT
+          else
+            echo "type=none" >> $GITHUB_OUTPUT
+          fi
+
+      # 5) Calculate automatic version bump
+      - name: Calculate auto version
+        id: auto
+        run: |
+          LAST="${{ steps.lasttag.outputs.tag }}"
+          if [ -z "$LAST" ]; then
+            LAST="v0.0.0"
+          fi
+
+          VERSION=${LAST#v}
+          IFS='.' read -r MA MI PA <<< "$VERSION"
+
+          case "${{ steps.bump.outputs.type }}" in
+            major) MA=$((MA+1)); MI=0; PA=0;;
+            minor) MI=$((MI+1)); PA=0;;
+            patch) PA=$((PA+1));;
+            none)
+              echo "version=$VERSION" >> $GITHUB_OUTPUT
+              exit 0;;
+          esac
+
+          AUTO="$MA.$MI.$PA"
+          echo "version=$AUTO" >> $GITHUB_OUTPUT
+
+      # 6) Determine final version (manual override wins)
+      - name: Determine final version
+        id: final
+        run: |
+          npm install semver
+          PKG="${{ steps.pkg.outputs.version }}"
+          AUTO="${{ steps.auto.outputs.version }}"
+          LAST="${{ steps.lasttag.outputs.tag }}"
+          if [ -z "$LAST" ]; then LAST="v0.0.0"; fi
+          LAST_VERSION=${LAST#v}
+
+          DECISION=$(node <<EOF
+            const semver = require('semver');
+            const pkg = "$PKG";
+            const auto = "$AUTO";
+            const last = "$LAST_VERSION";
+
+            if (semver.gt(pkg, last)) {
+              console.log(pkg); // manual override
+            } else {
+              console.log(auto); // auto bump
+            }
+          EOF
+          )
+          echo "version=$DECISION" >> $GITHUB_OUTPUT
+
+      # 7) Stop if unchanged
+      - name: Stop if unchanged
+        if: steps.final.outputs.version == steps.lasttag.outputs.tag
+        run: echo "Version unchanged. No release."
+
+      # 8) Update package.json version
+      - name: Update package.json version
+        run: npm version ${{ steps.final.outputs.version }} --no-git-tag-version --allow-same-version
+
+      # 9) Generate CHANGELOG.md
+      - name: Generate CHANGELOG.md
+        run: |
+          echo "## v${{ steps.final.outputs.version }} — $(date +'%Y-%m-%d')" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          LAST="${{ steps.lasttag.outputs.tag }}"
+          if git rev-parse "$LAST" >/dev/null 2>&1; then
+            git log --ignore-submodules=all "$LAST"..HEAD --pretty=format:"- %s" >> CHANGELOG.md
+          else
+            git log --ignore-submodules=all HEAD --pretty=format:"- %s" >> CHANGELOG.md
+          fi
+
+          echo "" >> CHANGELOG.md
+
+      # 10) Create and push tag
+      - name: Create tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag "v${{ steps.final.outputs.version }}"
+          git push origin "v${{ steps.final.outputs.version }}"
+
+      # 11) Build + pack
+      - name: Create package tarball
+        run: |
+          npm ci
+          npm run build
+          npm pack
+
+      # 12) Create GitHub Release
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: "v${{ steps.final.outputs.version }}"
+          artifacts: "*.tgz"
+          bodyFile: "CHANGELOG.md"
