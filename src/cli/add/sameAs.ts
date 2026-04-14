@@ -2,7 +2,6 @@ import Prompt, { IPrompt } from "../prompt.js";
 
 function addSameAs(person: any, url: string | undefined) {
   if (!url || !URL.canParse(url)) {
-    console.error(`${url} is not a valid URL`);
     return person;
   }
   const sameAs = person.sameAs ?? [];
