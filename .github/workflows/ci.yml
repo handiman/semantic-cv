@@ -28,6 +28,9 @@ jobs:
           npm install -g xunit-viewer jsdom
           npm run test
 
+      - name: Lint
+        run: npm run lint
+
       - uses: actions/upload-artifact@v7
         with:
           name: test-results
