@@ -24,21 +24,24 @@
     "semantic-cv": "bin/cli"
   },
   "scripts": {
-    "format": "prettier --write .",
-    "lint": "eslint src/**/*.ts test/**/*.js",
-    "lint:fix": "eslint --fix src/**/*.ts test/**/*.js",
     "clean": "rimraf dist",
     "watch": "npm run build && jsonld-cv watch",
-    "build": "npm run clean && tsc --project tsconfig.json && node scripts/copy-themes.js && node scripts/clean-dist.js",
+    "sysinfo": "node scripts/generate-sysinfo.js",
+    "build": "npm run clean && npm run sysinfo && tsc --project tsconfig.json && node scripts/copy-themes.js && node scripts/clean-dist.js",
     "pack": "npm run build && npm pack",
     "test": "npm run clean && npm run build && node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-results.xml \"./test/**/*.test.js\" && npm run test:results",
-    "test:results": "xunit-viewer -r test-results.xml -o test-results.html"
+    "test:results": "xunit-viewer -r test-results.xml -o test-results.html",
+    "format": "prettier --write .",
+    "lint": "eslint src/**/*.ts test/**/*.js",
+    "lint:fix": "eslint --fix src/**/*.ts test/**/*.js"
   },
   "files": [
     "dist/",
     "bin/",
     "sample.cv.json",
-    "CHANGELOG.md"
+    "sysinfo.json",
+    "CHANGELOG.md",
+    "SYSINFO.md"
   ],
   "keywords": [
     "cv",
