@@ -6,15 +6,15 @@ import {
   removeUndefined,
   removeNull,
   removeEmpty
-} from "../../dist/core/normalize.js";
-import arrayValues from "./arrayValues.js";
-import singleValues from "./singleValues.js";
-import fixesType from "./fixType.js";
-import fixesCasing from "./fixCasing.js";
-import sorting from "./sorting.js";
-import { fixesInvalidContext, removesRedundantContexts, addsMissingContext } from "./fixContext.js";
+} from "../dist/core/normalize.js";
+import arrayValues from "./normalize/arrayValues.js";
+import singleValues from "./normalize/singleValues.js";
+import fixesType from "./normalize/fixType.js";
+import fixesCasing from "./normalize/fixCasing.js";
+import sorting from "./normalize/sorting.js";
+import { fixesInvalidContext, removesRedundantContexts, addsMissingContext } from "./normalize/fixContext.js";
 
-describe("semantic-cv normalize", () => {
+describe("Normalize", () => {
   fixesCasing();
   fixesType();
   fixesInvalidContext();

@@ -24,8 +24,8 @@ export default () =>
       test("description", () =>
         assert.strictEqual(person.worksFor[0].description, values.description));
       test("roleName", () => assert.strictEqual(person.worksFor[0].roleName, values.roleName));
-      test("startDate", () => person.worksFor[0].startDate, values.startDate);
-      test("endDate", () => person.worksFor[0].endDate, values.endDate);
+      test("startDate", () => assert.strictEqual(person.worksFor[0].startDate, values.startDate));
+      test("endDate", () => assert.strictEqual(person.worksFor[0].endDate, values.endDate));
     });
 
     describe("inner", () => {

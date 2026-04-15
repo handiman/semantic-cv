@@ -3,17 +3,18 @@ import { describe, test } from "node:test";
 import fs from "node:fs";
 import path from "node:path";
 import os from "node:os";
-import context from "./context.js";
-import typ from "./type.js";
-import name from "./name.js";
-import description from "./description.js";
-import jobTitle from "./jobTitle.js";
-import sameAs from "./sameAs.js";
-import knowsAbout from "./knowsAbout.js";
-import skills from "./skills.js";
-import url from "./url.js";
-import image from "./image.js";
-import { analyzeFile, analyzeDirectory } from "../../dist/core/analyze.js";
+import context from "./analyze/context.js";
+import typ from "./analyze/type.js";
+import name from "./analyze/name.js";
+import description from "./analyze/description.js";
+import jobTitle from "./analyze/jobTitle.js";
+import sameAs from "./analyze/sameAs.js";
+import knowsAbout from "./analyze/knowsAbout.js";
+import skills from "./analyze/skills.js";
+import url from "./analyze/url.js";
+import image from "./analyze/image.js";
+import email from "./analyze/email.js";
+import { analyzeFile, analyzeDirectory } from "../dist/core/analyze.js";
 
 const readAll = async (reader) => {
   let result = "";
@@ -38,7 +39,7 @@ const createValidFile = (file) => {
   );
 };
 
-describe("semantic-cv analyze", () => {
+describe("Analyze", () => {
   describe("Mandatory fields", () => {
     describe("@context", context);
     describe("@type", typ);
@@ -53,6 +54,7 @@ describe("semantic-cv analyze", () => {
     describe("skills", skills);
     describe("url", url);
     describe("image", image);
+    describe("email", email);
   });
 
   describe("Analyze Directory", async () => {
