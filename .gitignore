@@ -3,6 +3,8 @@ cv.json*
 test-results.*
 .trash/
 *.orig
+SYSINFO.*
+CHANGELOG.*
 
 # Logs
 logs
