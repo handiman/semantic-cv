@@ -1,0 +1,48 @@
+name: Rotate npm token
+
+on:
+  schedule:
+    - cron: "0 3 */80 * *" # Run every 80 days
+  workflow_dispatch:
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Create new npm token via API
+        id: create
+        run: |
+          NEW_TOKEN=$(curl -s -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT_FOR_NPM_ROTATION }}" \
+            -d '{"readonly": false, "automation": true}' \
+            https://registry.npmjs.org/-/npm/v1/tokens | jq -r '.token')
+
+          if [ "$NEW_TOKEN" = "null" ] || [ -z "$NEW_TOKEN" ]; then
+            echo "Failed to create token"
+            exit 1
+          fi
+
+          echo "token=$NEW_TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Update GitHub secret NPM_TOKEN
+        run: |
+          echo "${{ steps.create.outputs.token }}" | gh secret set NPM_TOKEN --repo $GITHUB_REPOSITORY
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_FOR_NPM_ROTATION }}
+
+      - name: Fetch ID of old npm token
+        id: list
+        run: |
+          TOKEN_ID=$(curl -s \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT_FOR_NPM_ROTATION }}" \
+            https://registry.npmjs.org/-/npm/v1/tokens | jq -r '.objects[0].key')
+
+          echo "id=$TOKEN_ID" >> $GITHUB_OUTPUT
+
+      - name: Revoke old npm token
+        run: |
+          curl -s -X DELETE \
+            -H "Authorization: Bearer ${{ secrets.GH_PAT_FOR_NPM_ROTATION }}" \
+            https://registry.npmjs.org/-/npm/v1/tokens/${{ steps.list.outputs.id }}
