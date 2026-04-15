@@ -25,8 +25,8 @@ export default () => {
       test("@type", () => assert.strictEqual(person.alumniOf[0]["@type"], "Role"));
       test("description", () =>
         assert.strictEqual(person.alumniOf[0].description, values.description));
-      test("startDate", () => person.alumniOf[0].startDate, values.startDate);
-      test("endDate", () => person.alumniOf[0].endDate, values.endDate);
+      test("startDate", () => assert.strictEqual(person.alumniOf[0].startDate, values.startDate));
+      test("endDate", () => assert.strictEqual(person.alumniOf[0].endDate, values.endDate));
     });
 
     describe("inner", () => {
