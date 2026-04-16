@@ -50,8 +50,10 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Debug tags
-        run: git tag -l
+      - name: Fetch all tags explicitly
+        run: |
+          git fetch --tags --force
+          git tag -l
 
       # 1) Get last tag
       - name: Get last tag
@@ -175,7 +177,14 @@ jobs:
           npm ci
           npm run pack
 
-      # 12) Create GitHub Release
+      # 12) Publish package to npm
+      - name: Publish to npm
+        run: npm publish *.tgz --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+
+      # 13) Create GitHub Release
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
