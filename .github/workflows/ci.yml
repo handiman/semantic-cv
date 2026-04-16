@@ -149,8 +149,13 @@ jobs:
 
       # 7) Stop if unchanged
       - name: Stop if unchanged
-        if: steps.final.outputs.version == steps.lasttag.outputs.tag
-        run: echo "Version unchanged. No release."
+        run: |
+          LAST="${{ steps.lasttag.outputs.tag }}"
+          FINAL="${{ steps.final.outputs.version }}"
+          if [ "$LAST" = "$FINAL" ]; then
+            echo "Version unchanged. No release."
+            exit 0
+          fi
 
       # 8) Update package.json version
       - name: Update package.json version
