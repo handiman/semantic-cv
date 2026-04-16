@@ -45,6 +45,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref_name == 'master'
     steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
+          registry-url: 'https://registry.npmjs.org'
       - run: node -v
 
       - uses: actions/checkout@v6
@@ -175,7 +179,7 @@ jobs:
 
       # 11) Publish package to npm
       - name: Publish to npm
-        run: npm publish *.tgz --access public
+        run: npm publish *.tgz --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
