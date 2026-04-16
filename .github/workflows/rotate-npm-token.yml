@@ -10,6 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 25
+          registry-url: 'https://registry.npmjs.org'
+      - run: node -v
+      
+      - name: List tokens
+        run: 'curl -v -H "Authorization: Bearer ${{ secrets.GH_PAT_FOR_NPM_ROTATION }}i" https://registry.npmjs.org/-/npm/v1/user'
+
       - name: Create new npm token via API
         id: create
         run: |
