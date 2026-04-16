@@ -167,26 +167,25 @@ jobs:
 
           echo "" >> CHANGELOG.md
 
-      # 10) Create and push tag
+      # 10) Build + pack
+      - name: Create package tarball
+        run: |
+          npm ci
+          npm run pack
+
+      # 11) Publish package to npm
+      - name: Publish to npm
+        run: npm publish *.tgz --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      # 12) Create and push tag
       - name: Create tag
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag "v${{ steps.final.outputs.version }}"
           git push origin "v${{ steps.final.outputs.version }}"
-
-      # 11) Build + pack
-      - name: Create package tarball
-        run: |
-          npm ci
-          npm run pack
-
-      # 12) Publish package to npm
-      - name: Publish to npm
-        run: npm publish *.tgz --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
 
       # 13) Create GitHub Release
       - name: Create GitHub Release
@@ -195,3 +194,4 @@ jobs:
           tag: "v${{ steps.final.outputs.version }}"
           artifacts: "*.tgz"
           bodyFile: "CHANGELOG.md"
+
