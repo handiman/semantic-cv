@@ -50,7 +50,7 @@ jobs:
           node-version: 25
           registry-url: 'https://registry.npmjs.org'
       - run: node -v
-
+        
       - uses: actions/checkout@v6
         with:
           token: ${{ secrets.SUBMODULE_TOKEN }}
@@ -180,8 +180,6 @@ jobs:
       # 11) Publish package to npm
       - name: Publish to npm
         run: npm publish *.tgz --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # 12) Create and push tag
       - name: Create tag
