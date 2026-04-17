@@ -51,7 +51,7 @@ export async function renderFile(args: Array<string>) {
     writer.close();
   };
   const ats = async () =>
-    renderATS(person, Writable.toWeb(fs.createWriteStream(`${fileName}.txt`)));
+    renderATS(person, Writable.toWeb(fs.createWriteStream(`${fileName}.txt`)), true);
 
   await html();
   await ats();
