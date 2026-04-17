@@ -1,5 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { loadFromFile, defaults, pipe } from "../index.js";
 import { renderATS } from "../core/render/ats.js";
 import { renderHTML } from "../core/render/html.js";
@@ -8,6 +10,7 @@ import { HTMLTransformer } from "../core/transform.js";
 import { HTMLRewriter } from "html-rewriter-wasm";
 import { ThemeLoader } from "../themes/index.js";
 import normalize from "../core/normalize.js";
+import { KnownError } from "./error.js";
 
 /**
  * CLI command for rendering a Semantic‑CV file into HTML and ATS‑friendly text.
@@ -102,17 +105,12 @@ class NodeTransformer implements HTMLTransformer {
 }
 
 const resolveThemeRoot = () => {
-  for (const potentialPath of [
-    "themes", // normal case
-    "src/themes" // when debugging
-  ]) {
-    const fullPath = path.join(process.cwd(), potentialPath);
-    if (fs.existsSync(fullPath)) {
-      return fullPath;
-    }
+  const cliDir = dirname(fileURLToPath(import.meta.url));
+  const themeRoot = path.join(cliDir, "../themes");
+  if (fs.existsSync(themeRoot)) {
+    return themeRoot;
   }
-
-  return "";
+  throw new KnownError(`${themeRoot} does not exist`);
 };
 
 /**
@@ -141,4 +139,3 @@ const loadPerson = (fileName: string) => {
   }
   throw new Error(`${path.basename(fileName)} not found`);
 };
-
