@@ -100,7 +100,6 @@ jobs:
 
       # Calculate automatic version bump
       - name: Calculate auto version
-        if: steps.bump.outputs.type != 'none'
         id: auto
         run: |
           LAST="${{ steps.lasttag.outputs.tag }}"
@@ -125,7 +124,6 @@ jobs:
 
       # Determine final version (manual override wins)
       - name: Determine final version
-        if: steps.bump.outputs.type != 'none'
         id: final
         run: |
           npm install semver
