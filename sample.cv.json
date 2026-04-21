@@ -1,5 +1,8 @@
 {
-  "@context": "https://schema.org",
+  "@context": [
+    "https://schema.org",
+    "https://semantic.cv/context/latest.jsonld"
+  ],
   "@type": "Person",
   "name": "Henrik Becker",
   "jobTitle": "Senior Software Engineer",
@@ -311,5 +314,6 @@
         "name": "Karena Zoo, Lek & Hobby"
       }
     }
-  ]
+  ],
+  "theme": "winter"
 }

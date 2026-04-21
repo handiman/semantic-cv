@@ -11,6 +11,7 @@ import arrayValues from "./normalize/arrayValues.js";
 import singleValues from "./normalize/singleValues.js";
 import fixesType from "./normalize/fixType.js";
 import fixesCasing from "./normalize/fixCasing.js";
+import fixesTheme from "./normalize/fixTheme.js";
 import sorting from "./normalize/sorting.js";
 import { fixesInvalidContext, removesRedundantContexts, addsMissingContext } from "./normalize/fixContext.js";
 
@@ -18,6 +19,7 @@ describe("Normalize", () => {
   fixesCasing();
   fixesType();
   fixesInvalidContext();
+  fixesTheme();
   removesRedundantContexts();
   addsMissingContext();
   arrayValues();

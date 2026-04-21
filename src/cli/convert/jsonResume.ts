@@ -102,7 +102,7 @@ const convert = (jsonresume: any, callback: (person: any) => any) => {
     lifeEvent(jsonresume),
     callback
   )({
-    "@context": "https://schema.org",
+    "@context": ["https://schema.org", "https://semantic.cv/context/latest.jsonld"],
     "@type": "Person"
   });
 };
