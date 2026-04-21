@@ -154,6 +154,7 @@ jobs:
           EOF
           )
           echo "version=$DECISION" >> $GITHUB_OUTPUT
+          echo "Next version will be: $DECISION"
 
   release:
     needs: [test, version]
