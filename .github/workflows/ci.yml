@@ -87,12 +87,19 @@ jobs:
       - name: Determine bump type
         id: bump
         run: |
-          MSG="${{ steps.commit.outputs.msg }}"
-          if echo "$MSG" | grep -qiE "BREAKING[ -]CHANGE:" || echo "$MSG" | grep -qE "^[a-zA-Z]+(\(.+\))?!:"; then
+          LAST="${{ steps.lasttag.outputs.tag }}"
+          if [ -z "$LAST" ]; then LAST="v0.0.0"; fi
+
+          COMMITS=$(git log "$LAST"..HEAD --pretty=%s)
+
+          echo "Commits since last tag:"
+          echo "$COMMITS"
+
+          if echo "$COMMITS" | grep -qiE "BREAKING[ -]CHANGE:" || echo "$COMMITS" | grep -qE "^[a-zA-Z]+(\(.+\))?!:"; then
             echo "type=major" >> $GITHUB_OUTPUT
-          elif [[ "$MSG" =~ ^feat(\(.+\))?: ]]; then
+          elif echo "$COMMITS" | grep -qE '^feat(\(.+\))?:'; then
             echo "type=minor" >> $GITHUB_OUTPUT
-          elif [[ "$MSG" =~ ^fix(\(.+\))?: ]]; then
+          elif echo "$COMMITS" | grep -qE '^fix(\(.+\))?:'; then
             echo "type=patch" >> $GITHUB_OUTPUT
           else
             echo "type=none" >> $GITHUB_OUTPUT
