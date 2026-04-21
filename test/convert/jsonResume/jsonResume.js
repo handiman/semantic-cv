@@ -1,4 +1,5 @@
-import { describe } from "node:test";
+import assert from "node:assert";
+import { describe, it } from "node:test";
 import convert from "../../../dist/cli/convert/jsonResume.js";
 import jsonresume from "./jsonResume.json" with { type: "json" };
 import basics from "./basics.js";
@@ -33,9 +34,30 @@ export const convertHelper = async (source) => {
   return await toJson(transform.readable);
 };
 
+const context = () =>
+  describe("@context", () => {
+    it(`is set to ["https://schema.org/Person", "https://semantic.cv/latest.jsonld" ]`, async () => {
+      const person = await convertHelper();
+      assert.deepStrictEqual(person["@context"], [
+        "https://schema.org/Person",
+        "https://semantic.cv/latest.jsonld"
+      ]);
+    });
+  });
+
+const type = () =>
+  describe("@type", () => {
+    it(`is set to "Person"`, async () => {
+      const person = await convertHelper();
+      assert.strictEqual(person["@type"], "Person");
+    });
+  });
+
 export default () =>
   describe("JSON Resume", () => {
     load();
+    context();
+    type();
     basics();
     skills();
     languages();

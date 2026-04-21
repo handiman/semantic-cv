@@ -10,7 +10,10 @@ export default function () {
     assert.notDeepStrictEqual(results[fieldName], Success);
   });
 
-  it('must be "https://schema.org"', () => {
+  /**
+   * Semantic-cv 0.1.* version that didn't have its own vocab.
+   */
+  it('can be "https://schema.org"', () => {
     const results = analyze(
       JSON.stringify({
         "@context": "https://schema.org"
@@ -19,7 +22,18 @@ export default function () {
     assert.deepStrictEqual(results[fieldName], Success);
   });
 
-  it('must not be anything but "https://schema.org"', () => {
+  for (const version of ["latest", "1.0"]) {
+    it(`can be  ["https://schema.org/Person", "https://semantic.cv/${version}.jsonld" ]`, () => {
+      const results = analyze(
+        JSON.stringify({
+          "@context": [`https://schema.org/Person`, `https://semantic.cv/${version}.jsonld`]
+        })
+      );
+      assert.deepStrictEqual(results[fieldName], Success);
+    });
+  }
+
+  /*it('must not be anything but "https://schema.org"', () => {
     for (const attemptedValue of [
       "",
       "  ",
@@ -37,5 +51,5 @@ export default function () {
       );
       assert.notDeepStrictEqual(results[fieldName], Success);
     }
-  });
+  });*/
 }
