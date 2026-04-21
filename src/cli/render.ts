@@ -74,7 +74,7 @@ type Hook = {
  * `.transform()` contract used in Workers. Hooks are collected and
  * applied when `transform()` is called.
  */
-class NodeTransformer implements HTMLTransformer {
+export class NodeTransformer implements HTMLTransformer {
   private hooks: Array<Hook> = [];
 
   async transform(html: string): Promise<string> {
@@ -117,7 +117,7 @@ const resolveThemeRoot = () => {
  * Load a theme asset (HTML/CSS/JS) from the theme directory.
  * Returns an empty string if the asset is missing.
  */
-const loadAsset = (assetName: string) => {
+export const loadAsset = (assetName: string) => {
   const themeRoot = resolveThemeRoot();
   const themeId = path.parse(assetName).name;
   const assetPath = path.join(themeRoot, themeId, assetName);

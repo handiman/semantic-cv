@@ -14,7 +14,7 @@ describe("Set", () => {
         name: themeId
       });
     });
-    it("Removes obsole @theme field", async () => {
+    it("Removes obsolete @theme field", async () => {
       const person = await setProperty(supportedFieldName, themeId)({ "@theme": themeId });
       assert.strictEqual(person["@theme"], undefined);
     });
