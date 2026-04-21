@@ -42,7 +42,7 @@ export async function renderFile(args: Array<string>) {
       }
     });
     const loader = new ThemeLoader(transformer, loadAsset);
-    const theme = loader.loadTheme(themeId);
+    const theme = loader.loadTheme(getThemeId(themeId, person));
     const writer = fs.createWriteStream(`${fileName}.html`);
     writer.write(
       await renderHTML({
@@ -138,4 +138,14 @@ const loadPerson = (fileName: string) => {
     return pipe(loadFromFile(fileName), normalize)();
   }
   throw new Error(`${path.basename(fileName)} not found`);
+};
+
+const getThemeId = (themeId: string | null | undefined, person: any) => {
+  if (themeId) {
+    return themeId;
+  }
+  if (person.theme) {
+    return person.theme.name ?? person.theme;
+  }
+  return undefined;
 };
