@@ -36,11 +36,11 @@ export const convertHelper = async (source) => {
 
 const context = () =>
   describe("@context", () => {
-    it(`is set to ["https://schema.org/Person", "https://semantic.cv/latest.jsonld" ]`, async () => {
+    it(`is set to ["https://schema.org", "https://semantic.cv/context/latest.jsonld" ]`, async () => {
       const person = await convertHelper();
       assert.deepStrictEqual(person["@context"], [
-        "https://schema.org/Person",
-        "https://semantic.cv/latest.jsonld"
+        "https://schema.org",
+        "https://semantic.cv/context/latest.jsonld"
       ]);
     });
   });

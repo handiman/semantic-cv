@@ -2,12 +2,14 @@ import assert from "node:assert";
 import { it, test } from "node:test";
 import normalize from "../../dist/core/normalize.js";
 
+const rootContext = ["https://schema.org", "https://semantic.cv/context/latest.jsonld"];
+
 export function fixesInvalidContext() {
   it("automatically fixes invalid @context", () => {
     const person = normalize({
       "@context": "Wrong"
     });
-    assert.strictEqual(person["@context"], "https://schema.org");
+    assert.deepStrictEqual(person["@context"], rootContext);
   });
 }
 
@@ -31,8 +33,7 @@ export function addsMissingContext() {
         }
       ]
     });
-    const expectedContext = ["https://schema.org", "https://semantic.cv/latest.jsonld"];
-    assert.strictEqual(person["@context"], expectedContext);
+    assert.deepStrictEqual(person["@context"], rootContext);
     // Having @context on the root object is enough.
     assert.strictEqual(Object.keys(person.worksFor[0]).includes("@context"), false);
     assert.strictEqual(Object.keys(person.alumniOf[0]).includes("@context"), false);
@@ -41,21 +42,20 @@ export function addsMissingContext() {
 }
 
 export function removesRedundantContexts() {
-  const context = "https://schema.org";
   it("does not remove @context from root object (Person)", () => {
     const person = normalize({
-      "@context": context
+      "@context": rootContext
     });
-    assert.strictEqual(person["@context"], context);
+    assert.deepStrictEqual(person["@context"], rootContext);
   });
   it("automatically removes redundant @context from", () => {
     test("worksFor", () => {
       const { worksFor } = normalize({
         worksFor: [
           {
-            "@context": context,
+            "@context": rootContext,
             worksFor: {
-              "@context": context
+              "@context": rootContext
             }
           }
         ]
@@ -68,9 +68,9 @@ export function removesRedundantContexts() {
       const { alumniOf } = normalize({
         alumniOf: [
           {
-            "@context": context,
+            "@context": rootContext,
             alumniOf: {
-              "@context": context
+              "@context": rootContext
             }
           }
         ]
@@ -83,7 +83,7 @@ export function removesRedundantContexts() {
       const { hasCertification } = normalize({
         hasCertification: [
           {
-            "@context": context
+            "@context": rootContext
           }
         ]
       });
@@ -94,7 +94,7 @@ export function removesRedundantContexts() {
       const { hasCredential } = normalize({
         hasCredential: [
           {
-            "@context": context
+            "@context": rootContext
           }
         ]
       });
@@ -105,7 +105,7 @@ export function removesRedundantContexts() {
       const { lifeEvent } = normalize({
         lifeEvent: [
           {
-            "@context": context
+            "@context": rootContext
           }
         ]
       });

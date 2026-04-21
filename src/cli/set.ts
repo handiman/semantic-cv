@@ -9,9 +9,16 @@ import pipe from "../core/pipe.js";
  * Only a small set of scalar fields can be updated via `set`. Unknown
  * property names are ignored with a console message.
  */
-const setProperty = (propertyName: string, value: any) => (person: any) => {
+export const setProperty = (propertyName: string, value: any) => (person: any) => {
   switch (propertyName) {
     case "@theme":
+    case "theme":
+      delete person["@theme"];
+      person["theme"] = {
+        "@type": "Theme",
+        name: value
+      };
+      break;
     case "name":
     case "description":
     case "workLocation":
