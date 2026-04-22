@@ -46,9 +46,6 @@ jobs:
     outputs:
       bump_type: ${{ steps.bump.outputs.type }}
       next_version: ${{ steps.final.outputs.version }}
-      app_sha: ${{ steps.shas.outputs.app }}
-      themes_sha: ${{ steps.shas.outputs.themes }}
-      core_sha: ${{ steps.shas.outputs.core }}
     steps:
       - uses: actions/setup-node@v6
         with:
@@ -66,13 +63,6 @@ jobs:
         run: |
           git fetch --tags --force
           git tag -l
-
-      - name: Read commit SHAs
-        id: shas
-        run: |
-          echo "app=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "themes=$(git -C lib/themes rev-parse HEAD)" >> $GITHUB_OUTPUT
-          echo "core=$(git -C lib/core rev-parse HEAD)" >> $GITHUB_OUTPUT
 
       - name: Get last tag
         id: lasttag
@@ -218,7 +208,7 @@ jobs:
           path: CHANGELOG.md          
 
   release:
-    needs: [test, version]
+    needs: [test, version, changelog]
     runs-on: ubuntu-latest
     if: needs.version.outputs.bump_type != 'none' && github.ref_name == 'master'
     steps:
