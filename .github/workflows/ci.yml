@@ -64,26 +64,22 @@ jobs:
           git fetch --tags --force
           git tag -l
 
-      # Get last tag
       - name: Get last tag
         id: lasttag
         run: |
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      # Read version from package.json
       - name: Read package.json version
         id: pkg
         run: |
           PKG_VERSION=$(node -p "require('./package.json').version")
           echo "version=$PKG_VERSION" >> $GITHUB_OUTPUT
 
-      # Get commit message
       - name: Get commit message
         id: commit
         run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
-      # Determine bump type
       - name: Determine bump type
         id: bump
         run: |
@@ -105,8 +101,7 @@ jobs:
             echo "type=none" >> $GITHUB_OUTPUT
           fi
 
-      # Calculate automatic version bump
-      - name: Calculate auto version
+      - name: Calculate automatic version bump
         id: auto
         run: |
           LAST="${{ steps.lasttag.outputs.tag }}"
@@ -129,8 +124,7 @@ jobs:
           AUTO="$MA.$MI.$PA"
           echo "version=$AUTO" >> $GITHUB_OUTPUT
 
-      # Determine final version (manual override wins)
-      - name: Determine final version
+      - name: Determine final version # (manual override wins)
         id: final
         run: |
           npm install semver
@@ -156,8 +150,65 @@ jobs:
           echo "version=$DECISION" >> $GITHUB_OUTPUT
           echo "Next version will be: $DECISION"
 
+  
+  changelog:
+    runs-on: ubuntu-latest
+    needs: [version]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.SUBMODULE_TOKEN }}
+          submodules: recursive
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Fetch all tags
+        run: git fetch --tags --force
+
+      - name: Generate changelog
+        run: |
+          VERSION=${{ needs.version.outputs.next_version }}
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+
+          echo "# v$VERSION" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+
+          echo "## Main Repository" >> CHANGELOG.md
+          if [ -n "$LAST_TAG" ]; then
+            git log $LAST_TAG..HEAD --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          else
+            git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          fi
+          echo "" >> CHANGELOG.md
+
+          for SUB in src/themes src/core; do
+            echo "## $SUB" >> CHANGELOG.md
+
+            if [ -n "$LAST_TAG" ]; then
+              OLD_SHA=$(git ls-tree $LAST_TAG $SUB | awk '{print $3}')
+            else
+              OLD_SHA=""
+            fi
+
+            NEW_SHA=$(git ls-tree HEAD $SUB | awk '{print $3}')
+
+            if [ -z "$OLD_SHA" ] || [ "$OLD_SHA" = "$NEW_SHA" ]; then
+              echo "_No changes_" >> CHANGELOG.md
+            else
+              git -C $SUB log $OLD_SHA..$NEW_SHA --pretty=format:"- %s (%h)" >> CHANGELOG.md
+            fi
+
+            echo "" >> CHANGELOG.md
+          done
+
+      - name: Upload changelog artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: changelog-v${{ needs.version.outputs.next_version }}
+          path: CHANGELOG.md          
+
   release:
-    needs: [test, version]
+    needs: [test, version, changelog]
     runs-on: ubuntu-latest
     if: needs.version.outputs.bump_type != 'none' && github.ref_name == 'master'
     steps:
@@ -174,52 +225,42 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      # Get last tag
       - name: Get last tag
         id: lasttag
         run: |
           TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      # Update package.json version
       - name: Update package.json version
         if: needs.version.outputs.bump_type != 'none'
         run: npm version ${{ needs.version.outputs.next_version }} --no-git-tag-version --allow-same-version
 
-      # Generate CHANGELOG.md
-      - name: Generate CHANGELOG.md
+      - name: Download changelog artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: changelog-v${{ needs.version.outputs.next_version }}
+          path: ./tmp-changelog
+
+      - name: Copy changelog
         run: |
-          echo "## v${{ needs.version.outputs.next_version }} — $(date +'%Y-%m-%d')" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
+          mkdir -p assets
+          cp ./tmp-changelog/CHANGELOG.md ./CHANGELOG.md
 
-          LAST="${{ steps.lasttag.outputs.tag }}"
-          if git rev-parse "$LAST" >/dev/null 2>&1; then
-            git log --ignore-submodules=all "$LAST"..HEAD --pretty=format:"- %s" >> CHANGELOG.md
-          else
-            git log --ignore-submodules=all HEAD --pretty=format:"- %s" >> CHANGELOG.md
-          fi
-
-          echo "" >> CHANGELOG.md
-
-      # Build + pack
-      - name: Create package tarball
+      - name: Build + pack
         run: |
           npm ci
           npm run pack
 
-      # Publish package to npm
-      - name: Publish to npm
+      - name: Publish package to npm
         run: npm publish *.tgz --provenance --access public
 
-      # Create and push tag
-      - name: Create tag
+      - name: Create and push tag
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git tag "v${{ needs.version.outputs.next_version }}"
           git push origin "v${{ needs.version.outputs.next_version }}"
 
-      # Create GitHub Release
       - name: Create GitHub Release
         uses: ncipollo/release-action@v1
         with:
