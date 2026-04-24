@@ -1,6 +1,6 @@
 # Semantic-CV - a schema.org/Person based CV Generator
 
-<img src="https://assets.semantic.cv/img/semantikitten-scholar.png" alt="Artistic Semantikitten" height="100" align="right" style="margin-left: 20px;" />
+<img src="https://assets.semantic.cv/semantikitten-scholar.png" alt="Artistic Semantikitten" height="100" align="right" style="margin-left: 20px;" />
 
 Semantic‑CV is a minimal, idiomatic convention for expressing CV data using the global standard [schema.org/Person](https://schema.org/Person).
 It does not introduce a new schema. Instead, it applies existing fields consistently and adds only a few carefully chosen extensions.
