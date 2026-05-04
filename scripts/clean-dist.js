@@ -22,6 +22,7 @@ async function removeDir(fullPath) {
 
 const directoriesToClean = ["dist/core", "dist/themes"];
 const pathsToRemove = [
+  "test",
   "dist",
   ".git",
   ".gitignore",
@@ -29,7 +30,13 @@ const pathsToRemove = [
   ".prettierignore",
   ".prettierrc",
   "LICENSE",
-  "README.md"
+  "README.md",
+  "test-results.html",
+  "test-results.xml",
+  "test-results.md",
+  "tsconfig.json",
+  "package.json",
+  "package-lock.json"
 ];
 
 for (const directory of directoriesToClean) {
