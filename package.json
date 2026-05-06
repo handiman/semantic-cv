@@ -20,6 +20,9 @@
   "exports": {
     ".": "./dist/index.js"
   },
+  "imports": {
+    "#themes/*": "./dist/themes/*"
+  },
   "bin": {
     "semantic-cv": "bin/cli"
   },
