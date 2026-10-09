@@ -1,5 +1,7 @@
 # Semantic-CV - a schema.org/Person based CV Generator
 
+[![Mozilla HTTP Observatory grade for semantic.cv](https://img.shields.io/mozilla-observatory/grade/semantic.cv)](https://developer.mozilla.org/en-US/observatory/analyze?host=semantic.cv)
+
 <img src="https://assets.semantic.cv/semantikitten-scholar.png" alt="Artistic Semantikitten" height="100" align="right" style="margin-left: 20px;" />
 
 Semantic‑CV is a minimal, idiomatic convention for expressing CV data using the global standard [schema.org/Person](https://schema.org/Person).
@@ -172,6 +174,10 @@ If no filename is provided, cv.json in the current directory is used
 ## Conventions by CV Area
 
 Conventions for each CV area — including recommended fields, ordering rules, and semantic patterns — are documented in the dedicated reference:
-[https://github.com/handiman/semantic-cv-docs/blob/master/conventions.md](https://github.com/handiman/semantic-cv-docs/blob/master/conventions.md)
+[https://semantic.cv/docs/conventions](https://semantic.cv/docs/conventions)
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](https://github.com/handiman/semantic-cv/blob/master/CONTRIBUTING.md) and the [code of conduct](https://github.com/handiman/semantic-cv/blob/master/CODE_OF_CONDUCT.md).
 
 [person]: https://schema.org/Person
