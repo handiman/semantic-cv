@@ -1,6 +1,6 @@
 # Semantic-CV - a schema.org/Person based CV Generator
 
-[![Mozilla HTTP Observatory grade for semantic.cv](https://img.shields.io/mozilla-observatory/grade/semantic.cv)](https://developer.mozilla.org/en-US/observatory/analyze?host=semantic.cv)
+[![semantic.cv security grade from Mozilla HTTP Observatory](https://img.shields.io/mozilla-observatory/grade/semantic.cv?label=semantic.cv%20security)](https://developer.mozilla.org/en-US/observatory/analyze?host=semantic.cv)
 
 <img src="https://assets.semantic.cv/semantikitten-scholar.png" alt="Artistic Semantikitten" height="100" align="right" style="margin-left: 20px;" />
 
