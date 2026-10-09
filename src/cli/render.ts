@@ -43,15 +43,13 @@ export async function renderFile(args: Array<string>) {
     });
     const loader = new ThemeLoader(transformer, loadAsset);
     const theme = loader.loadTheme(getThemeId(themeId, person));
-    const writer = fs.createWriteStream(`${fileName}.html`);
-    writer.write(
-      await renderHTML({
-        person,
-        theme,
-        transformer
-      })
-    );
-    writer.close();
+    const rendered = await renderHTML({
+      person,
+      theme,
+      transformer
+    });
+    // Awaited, so a failed write is reported instead of lost.
+    await fs.promises.writeFile(`${fileName}.html`, rendered);
   };
   const ats = async () =>
     renderATS(person, Writable.toWeb(fs.createWriteStream(`${fileName}.txt`)), true);
@@ -137,7 +135,7 @@ const loadPerson = (fileName: string) => {
   if (fs.existsSync(fileName)) {
     return pipe(loadFromFile(fileName), normalize)();
   }
-  throw new Error(`${path.basename(fileName)} not found`);
+  throw new KnownError(`${path.basename(fileName)} not found`);
 };
 
 const getThemeId = (themeId: string | null | undefined, person: any) => {
