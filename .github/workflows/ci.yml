@@ -76,10 +76,6 @@ jobs:
           PKG_VERSION=$(node -p "require('./package.json').version")
           echo "version=$PKG_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Get commit message
-        id: commit
-        run: echo "msg=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
-
       - name: Determine bump type
         id: bump
         run: |
