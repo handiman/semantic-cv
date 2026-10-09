@@ -172,6 +172,10 @@ If no filename is provided, cv.json in the current directory is used
 ## Conventions by CV Area
 
 Conventions for each CV area — including recommended fields, ordering rules, and semantic patterns — are documented in the dedicated reference:
-[https://github.com/handiman/semantic-cv-docs/blob/master/conventions.md](https://github.com/handiman/semantic-cv-docs/blob/master/conventions.md)
+[https://semantic.cv/docs/conventions](https://semantic.cv/docs/conventions)
+
+## Contributing
+
+Bug reports, ideas and pull requests are welcome. See [CONTRIBUTING.md](https://github.com/handiman/semantic-cv/blob/master/CONTRIBUTING.md) and the [code of conduct](https://github.com/handiman/semantic-cv/blob/master/CODE_OF_CONDUCT.md).
 
 [person]: https://schema.org/Person
