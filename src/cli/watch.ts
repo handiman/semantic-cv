@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { analyzeDirectory, analyzeFile } from "../core/analyze.js";
+import { analyzeDirectory, analyzeFile } from "../core/analyzeFiles.js";
 import { defaults } from "../index.js";
 
 /**
