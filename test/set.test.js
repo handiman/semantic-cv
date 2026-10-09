@@ -20,3 +20,23 @@ describe("Set", () => {
     });
   }
 });
+
+describe("Set unknown property", () => {
+  it("throws instead of returning a value that would overwrite the CV", () => {
+    const person = { name: "Henrik" };
+    assert.throws(() => setProperty("nickname", "Henke")(person), { name: "KnownError" });
+    assert.deepStrictEqual(person, { name: "Henrik" });
+  });
+
+  for (const [alias, field] of [
+    ["website", "url"],
+    ["phone", "telephone"],
+    ["title", "jobTitle"],
+    ["name", "name"]
+  ]) {
+    it(`${alias} sets ${field}`, () => {
+      const person = setProperty(alias, "value")({});
+      assert.strictEqual(person[field], "value");
+    });
+  }
+});

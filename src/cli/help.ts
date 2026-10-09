@@ -38,11 +38,11 @@ Commands:
 
 Examples:
   semantic-cv init henrik.cv.json
-  semantic-cv set name henrik.cv.json "Henrik Becker"
+  semantic-cv set name "Henrik Becker" henrik.cv.json
   semantic-cv add work henrik.cv.json
   semantic-cv convert https://www.henrikbecker.net/assets/henrik-becker.resume.json henrik.cv.json
   semantic-cv normalize henrik.cv.json
-  semantic-cv render classic henrik.cv.json
+  semantic-cv render minimal henrik.cv.json
   semantic-cv analyze
   semantic-cv watch
 `;
