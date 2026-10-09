@@ -61,7 +61,7 @@
     "jsonresume"
   ],
   "devDependencies": {
-    "@types/node": "25.3.1",
+    "@types/node": "26.6.4",
     "@types/prompts": "2.4.9",
     "@typescript-eslint/eslint-plugin": "^8.58.2",
     "@typescript-eslint/parser": "^8.58.2",
