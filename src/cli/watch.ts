@@ -37,7 +37,7 @@ export default watch;
 /**
  * Wrap a callback so it only fires once per 100ms per filename.
  */
-function createDebouncedWatcher(callback: (filename: string) => void) {
+export function createDebouncedWatcher(callback: (filename: string) => void) {
   const debounceMap = new Map<string, NodeJS.Timeout>();
 
   return (filename: string) => {
