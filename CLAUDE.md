@@ -48,7 +48,8 @@ Two **separate repositories**, shared with the hosted site, included as Git subm
   pointer moves (commit it as `fix(Render): Bump core and themes …`).
 - `git status` showing ` M src/core` / ` M src/themes` just means the checked-out submodule commit differs from the
   recorded pointer. Don't stage it unless the task is to bump the pointer.
-- Do not add `CLAUDE.md` files inside the submodules from this repo; they belong to those repositories.
+- Each submodule has its own `CLAUDE.md`, committed in its own repository. Edit it there, on a branch of its own, not
+  from here.
 - `scripts/copy-themes.js` copies the non-`.ts` theme assets (CSS etc.) into `dist/themes` after `tsc`.
 
 ## Working with the owner
@@ -98,3 +99,5 @@ pattern), suggest creating one rather than burying the _why_ in this file.
 
 - [src/cli/CLAUDE.md](src/cli/CLAUDE.md) — CLI commands, prompts, error handling, `add` sections, JSON Resume convert
 - [test/CLAUDE.md](test/CLAUDE.md) — CLI tests, `FakePrompt`, testing against `dist/`
+- [src/core/CLAUDE.md](src/core/CLAUDE.md) — submodule: normalize, analyze, render, HTML escaping
+- [src/themes/CLAUDE.md](src/themes/CLAUDE.md) — submodule: `Theme` base class, adding a theme, the generated registry
