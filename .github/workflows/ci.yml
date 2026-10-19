@@ -6,6 +6,16 @@ on:
       - "**"
     tags-ignore:
       - "**"
+# One run per branch at a time. On master the runs queue instead of overlapping, and a newer
+# queued run replaces an older one that has not started: `version` works out the next number from
+# the tags, so two overlapping runs both picked the same one and the second failed on npm publish
+# ("Cannot publish over previously staged version"), leaving its commits out of the release. A run
+# that is already going is never cancelled on master: the publish and the tag must finish together.
+# Other branches cancel a superseded run.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/master' }}
+
 permissions:
   contents: write
   id-token: write
