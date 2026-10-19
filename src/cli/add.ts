@@ -1,4 +1,5 @@
 import { defaults, loadFromFile, pipe, saveToFile } from "../index.js";
+import { IPrompt } from "./prompt.js";
 import normalize from "../core/normalize.js";
 import addSameAs from "./add/sameAs.js";
 import addSkills from "./add/skills.js";
@@ -34,39 +35,43 @@ import addHasCredential from "./add/hasCredential.js";
  *   - project
  *
  * Unknown property names are ignored with a console message.
+ *
+ * @param propertyName Property (or alias) to add.
+ * @param prompt Source of the answers; defaults to asking on the terminal.
  */
-const add = (propertyName: string) => (person: any) => {
+export const add = (propertyName: string, prompt?: IPrompt) => (person: any) => {
   switch (propertyName) {
     case "sameAs":
-      return addSameAs(person);
+      return addSameAs(person, prompt);
     case "skill":
     case "skills":
-      return addSkills(person);
+      return addSkills(person, prompt);
     case "competence":
     case "knowsAbout":
-      return addKnowsAbout(person);
+      return addKnowsAbout(person, prompt);
     case "language":
     case "knowsLanguage":
-      return addKnowsLanguage(person);
+      return addKnowsLanguage(person, prompt);
     case "cert":
     case "certification":
     case "hasCertification":
-      return addHasCertification(person);
+      return addHasCertification(person, prompt);
     case "credential":
-      return addHasCredential(person);
+    case "hasCredential":
+      return addHasCredential(person, prompt);
     case "employer":
     case "employment":
     case "work":
     case "worksFor":
-      return addWorksFor(person);
+      return addWorksFor(person, prompt);
     case "education":
     case "school":
     case "alumniOf":
-      return addAlumniOf(person);
+      return addAlumniOf(person, prompt);
     case "lifeEvent":
-      return addLifeEvent(person);
+      return addLifeEvent(person, prompt);
     case "project":
-      return addProject(person);
+      return addProject(person, prompt);
     default:
       console.info(`${propertyName} ignored.`);
       return person;
