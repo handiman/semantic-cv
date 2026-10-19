@@ -36,7 +36,7 @@ describe("Init", () => {
     await init(["init", file], new FakePrompt([...profile]));
 
     const person = JSON.parse(fs.readFileSync(file, "utf8"));
-    assert.ok([person["@context"]].flat().includes("https://schema.org"));
+    assert.strictEqual([person["@context"]].flat()[0], "https://schema.org");
     assert.strictEqual(person["@type"], "Person");
     assert.strictEqual(person.name, "Yoda");
     assert.strictEqual(person.jobTitle, "Jedi Master");
