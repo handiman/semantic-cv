@@ -10,6 +10,12 @@ updates:
     commit-message:
       prefix: chore
       include: scope
+    ignore:
+      # typescript-eslint doesn't support TypeScript 7 (peer range <6.1.0), so `npm ci` fails and
+      # the linter refuses to start. Remove once it supports TS 7.1+; tracked in
+      # https://github.com/typescript-eslint/typescript-eslint/issues/10940
+      - dependency-name: typescript
+        versions: [">=7.0.0"]
     groups:
       # One PR for all routine bumps instead of one per package.
       minor-and-patch:
