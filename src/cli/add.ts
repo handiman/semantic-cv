@@ -53,6 +53,7 @@ const add = (propertyName: string) => (person: any) => {
     case "hasCertification":
       return addHasCertification(person);
     case "credential":
+    case "hasCredential":
       return addHasCredential(person);
     case "employer":
     case "employment":
