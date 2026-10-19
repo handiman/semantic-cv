@@ -77,6 +77,14 @@ describe("Set command", () => {
     assert.strictEqual("website" in read(), false);
   });
 
+  it("stores the theme as a Theme object", async () => {
+    fs.writeFileSync(file, JSON.stringify({ name: "Henrik" }));
+
+    await set(["set", "theme", "lena", file]);
+
+    assert.deepStrictEqual(read().theme, { "@type": "Theme", name: "lena" });
+  });
+
   it("leaves the file untouched for an unknown property", async () => {
     const original = JSON.stringify({ name: "Henrik" });
     fs.writeFileSync(file, original);

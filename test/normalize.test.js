@@ -32,6 +32,20 @@ describe("Normalize command", () => {
     assert.strictEqual("skills" in person, false);
   });
 
+  it("trims surrounding whitespace from strings", async () => {
+    fs.writeFileSync(
+      file,
+      JSON.stringify({ name: "  Yoda  ", jobTitle: "Jedi Master\n", skills: [" The Force "] })
+    );
+
+    await normalize(["normalize", file]);
+
+    const person = JSON.parse(fs.readFileSync(file, "utf8"));
+    assert.strictEqual(person.name, "Yoda");
+    assert.strictEqual(person.jobTitle, "Jedi Master");
+    assert.deepStrictEqual(person.skills, ["The Force"]);
+  });
+
   it("is idempotent", async () => {
     fs.writeFileSync(file, JSON.stringify({ name: "Yoda", jobTitle: "Jedi Master" }));
 
