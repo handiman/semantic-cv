@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import Prompt from "./prompt.js";
+import Prompt, { IPrompt } from "./prompt.js";
 import { defaults, saveToFile } from "../index.js";
 import normalize from "../core/normalize.js";
 import pipe from "../core/pipe.js";
@@ -23,10 +23,10 @@ import pipe from "../core/pipe.js";
  * validate, render, or watch their new CV.
  *
  * @param args CLI arguments: `[node, script, fileName?]`.
+ * @param prompt Source of the answers; injectable so tests need no terminal.
  */
-export async function init(args: Array<string>) {
-  const prompt = new Prompt();
-  const ask = prompt.ask;
+export async function init(args: Array<string>, prompt: IPrompt = new Prompt()) {
+  const ask = (question: string, defaultValue?: string) => prompt.ask(question, defaultValue);
   const name = await ask("Your name");
   const jobTitle = await ask("Job title");
   const email = await ask("Email");
@@ -59,7 +59,7 @@ export async function init(args: Array<string>) {
     lifeEvent: []
   };
 
-  const filePath = path.join(process.cwd(), fileName);
+  const filePath = path.resolve(fileName);
   const save = pipe(normalize, saveToFile(filePath));
 
   if (!fs.existsSync(filePath)) {
