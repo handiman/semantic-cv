@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { analyzeDirectory, analyzeFile } from "../core/analyzeFiles.js";
 import { defaults } from "../index.js";
+import { assertExists } from "./file.js";
 
 /**
  * CLI command for analyzing a Semantic‑CV file or an entire directory.
@@ -19,6 +20,7 @@ import { defaults } from "../index.js";
 export async function analyze(args: Array<string>) {
   const [, baseName] = args;
   const fullPath = path.join(process.cwd(), baseName ?? defaults.fileName);
+  assertExists(fullPath);
   if (fs.statSync(fullPath).isDirectory()) {
     await analyzeDirectory(fullPath);
   } else {
