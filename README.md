@@ -136,7 +136,6 @@ The normalize command:
 
 - Sorts work experience, education, projects, certifications, and life events in descending chronological order
 - Converts single values to arrays (and arrays to single values) when the schema expects it
-- Trims surrounding whitespace from strings
 
 ### Required fields
 
