@@ -21,5 +21,7 @@ their own tests (`npm run test:core`, `npm run test:themes`) — don't duplicate
   after a rejected call (see `set.test.js`).
 - Never touch the user's real `cv.json`; use in-memory objects. `render.test.js` renders to a string with `renderHTML`
   and inspects it with JSDOM instead of writing files.
-- No network in tests. `convert` is tested against the local fixture `convert/jsonResume/jsonResume.json`, not URLs.
+- No external network in tests. `convert` is tested against the local fixture `convert/jsonResume/jsonResume.json`, and
+  the URL case against a throwaway `http.createServer` on `127.0.0.1` with port 0 (see `convert/jsonResume/load.js`).
+  Copy that pattern, never a real URL.
 - A new command or a new `add` section comes with a test in the same PR.
