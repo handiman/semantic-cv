@@ -43,7 +43,8 @@ describe("bin/cli", () => {
   });
 
   it("exits with 1 for an unexpected error", () => {
-    const { status, stderr } = run("normalize", "missing.cv.json");
+    // A directory where a CV file should be is not something the user is told how to fix.
+    const { status, stderr } = run("normalize", ".");
 
     assert.strictEqual(status, 1);
     assert.match(stderr, /^Unexpected error:/);

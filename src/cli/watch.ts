@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { analyzeDirectory, analyzeFile } from "../core/analyzeFiles.js";
 import { defaults } from "../index.js";
+import { assertExists } from "./file.js";
 
 /**
  * CLI command for continuously validating a Semantic‑CV file or directory.
@@ -25,6 +26,7 @@ import { defaults } from "../index.js";
 export async function watch(args: Array<string>) {
   const [, file] = args;
   const fullPath = path.join(process.cwd(), file ?? defaults.fileName);
+  assertExists(fullPath);
   if (fs.statSync(fullPath).isDirectory()) {
     await watchDirectory(fullPath);
   } else {
