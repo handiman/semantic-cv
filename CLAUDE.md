@@ -25,6 +25,8 @@ themes also power the hosted renderer at [semantic.cv](https://semantic.cv).
 - Default theme `minimal`, default file `cv.json` — both in `defaults` in [src/index.ts](src/index.ts).
 - `cv.json*`, `dist/`, `test-results.*`, `SYSINFO.*` and `CHANGELOG.*` are git-ignored output. Never commit them.
 - Prettier is authoritative (`.prettierrc`: double quotes, no trailing commas, width 100). Run `npm run format`.
+- Tests are the spec. Write them as readable sentences so that a doc comment restating what a function does is
+  redundant, and leave such comments out.
 - Out of scope for now: more commands than the ones in `bin/cli`, plugins, a theme/extension ecosystem.
 
 ## Stack
