@@ -1,10 +1,13 @@
 import assert from "node:assert";
-import { describe, it } from "node:test";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { afterEach, beforeEach, describe, it } from "node:test";
 import { JSDOM } from "jsdom";
 import normalize from "../dist/core/normalize.js";
 import { renderHTML } from "../dist/core/render/html.js";
 import ThemeLoader from "../dist/themes/themeLoader.js";
-import { NodeTransformer, loadAsset } from "../dist/cli/render.js";
+import renderFile, { NodeTransformer, loadAsset } from "../dist/cli/render.js";
 
 describe("Render", () => {
   it(`Removes SemanticCV vocab from <script type="application/ld+json">`, async () => {
@@ -32,5 +35,68 @@ describe("Render", () => {
       "@type": "Person",
       name: "Yoda"
     });
+  });
+});
+
+describe("Render command", () => {
+  let dir;
+  let file;
+
+  beforeEach(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), "semantic-cv-render-"));
+    file = path.join(dir, "cv.json");
+  });
+
+  afterEach(() => {
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  const writeCv = (person) =>
+    fs.writeFileSync(file, JSON.stringify({ name: "Yoda", jobTitle: "Jedi Master", ...person }));
+
+  it("writes an HTML file and an ATS text file next to the CV", async () => {
+    writeCv({});
+
+    await renderFile(["render", "minimal", file]);
+
+    assert.ok(fs.readFileSync(`${file}.html`, "utf8").includes("Yoda"));
+    assert.ok(fs.readFileSync(`${file}.txt`, "utf8").includes("Yoda"));
+  });
+
+  it("links the HTML to the text file", async () => {
+    writeCv({});
+
+    await renderFile(["render", "minimal", file]);
+
+    const html = fs.readFileSync(`${file}.html`, "utf8");
+    assert.ok(
+      html.includes(
+        `<link rel="alternate" type="text/plain" title="ATS-Friendly CV" href="${file}.txt" />`
+      )
+    );
+  });
+
+  it("uses the theme named in the CV when none is given", async () => {
+    writeCv({ theme: "typewriter" });
+
+    await renderFile(["render", undefined, file]);
+
+    const html = fs.readFileSync(`${file}.html`, "utf8");
+    assert.ok(html.includes('<meta name="semanticcv:theme" content="typewriter"'));
+  });
+
+  it("prefers the theme argument over the one in the CV", async () => {
+    writeCv({ theme: "typewriter" });
+
+    await renderFile(["render", "minimal", file]);
+
+    const html = fs.readFileSync(`${file}.html`, "utf8");
+    assert.ok(html.includes('<meta name="semanticcv:theme" content="minimal"'));
+  });
+
+  it("reports a missing CV without writing anything", async () => {
+    await assert.rejects(renderFile(["render", "minimal", file]), { name: "KnownError" });
+
+    assert.deepStrictEqual(fs.readdirSync(dir), []);
   });
 });
