@@ -106,6 +106,9 @@ semantic-cv add worksFor
 # Prompts for adding education entries
 semantic-cv add alumniOf
 
+# Prompts for adding keywords (skills) to a work or project entry
+semantic-cv add keywords
+
 # Sets a single value
 semantic-cv set name Yoda
 ```

@@ -9,6 +9,7 @@ import sameAs from "./add/sameAs.js";
 import skills from "./add/skills.js";
 import knowsLanguage from "./add/knowsLanguage.js";
 import knowsAbout from "./add/knowsAbout.js";
+import keywords from "./add/keywords.js";
 
 describe("Add", () => {
   alumniOf();
@@ -21,4 +22,5 @@ describe("Add", () => {
   skills();
   knowsLanguage();
   knowsAbout();
+  keywords();
 });

@@ -12,6 +12,7 @@ Commands:
 
   add <section> [filename=cv.json]
       Add a structured item (e.g. work, education) using interactive prompts.
+      "add keywords" adds keywords (skills) to one of your work or project entries.
 
   convert <input-file-or-url> [output-file=prompt]
       Convert a JSON Resume file into a Semantic‑CV JSON‑LD file.
