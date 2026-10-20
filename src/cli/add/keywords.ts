@@ -23,16 +23,11 @@ async function chooseRole(roles: Array<any>, prompt: IPrompt) {
 }
 
 async function askForKeywords(prompt: IPrompt) {
-  const keywords: Array<string> = [];
-  for (
-    let answer = await prompt.ask("Keyword");
-    answer?.trim();
-    answer = await prompt.ask("Keyword")
-  ) {
-    keywords.push(answer.trim());
-  }
-
-  return keywords;
+  const answer = await prompt.ask("Keywords (comma separated)");
+  return (answer ?? "")
+    .split(",")
+    .map((keyword) => keyword.trim())
+    .filter((keyword) => keyword.length > 0);
 }
 
 function addKeywords(person: any, roleIndex: number, keywords: Array<string>) {

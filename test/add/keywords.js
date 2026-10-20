@@ -27,20 +27,32 @@ export default () =>
         assert.deepStrictEqual(person.worksFor[0].keywords, [term("TypeScript")]);
       });
 
-      it("keeps asking for keywords until an empty answer", async () => {
+      it("takes several keywords in one comma separated answer", async () => {
         const person = await addKeywords(
           { worksFor: [acme] },
-          new FakePrompt(["TypeScript", "Azure Service Bus", "", "never reached"])
+          new FakePrompt(["TypeScript,Azure Service Bus, Rust"])
         );
         assert.deepStrictEqual(person.worksFor[0].keywords, [
           term("TypeScript"),
-          term("Azure Service Bus")
+          term("Azure Service Bus"),
+          term("Rust")
         ]);
       });
 
-      it("trims the keywords", async () => {
-        const person = await addKeywords({ worksFor: [acme] }, new FakePrompt(["  Rust\t"]));
-        assert.deepStrictEqual(person.worksFor[0].keywords, [term("Rust")]);
+      it("trims each keyword", async () => {
+        const person = await addKeywords({ worksFor: [acme] }, new FakePrompt(["  Rust\t , Go "]));
+        assert.deepStrictEqual(person.worksFor[0].keywords, [term("Rust"), term("Go")]);
+      });
+
+      it("skips empty items between the commas", async () => {
+        const person = await addKeywords({ worksFor: [acme] }, new FakePrompt(["Rust,, ,Go,"]));
+        assert.deepStrictEqual(person.worksFor[0].keywords, [term("Rust"), term("Go")]);
+      });
+
+      it("keeps the spaces inside a keyword", async () => {
+        const answer = new FakePrompt(["Domain Driven Design"]);
+        const person = await addKeywords({ worksFor: [acme] }, answer);
+        assert.deepStrictEqual(person.worksFor[0].keywords, [term("Domain Driven Design")]);
       });
 
       it("adds to the keywords the role already has", async () => {
@@ -55,8 +67,8 @@ export default () =>
         assert.deepStrictEqual(rest, acme);
       });
 
-      for (const answer of [undefined, "", " ", "\n", "\t"]) {
-        it(`returns the person unchanged when the first answer is ${JSON.stringify(answer) ?? "missing"}`, async () => {
+      for (const answer of [undefined, "", " ", "\n", "\t", ",", " , ,"]) {
+        it(`returns the person unchanged when the answer is ${JSON.stringify(answer) ?? "missing"}`, async () => {
           const person = { worksFor: [acme] };
           assert.strictEqual(await addKeywords(person, new FakePrompt([answer])), person);
         });
