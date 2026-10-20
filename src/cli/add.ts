@@ -11,6 +11,7 @@ import addAlumniOf from "./add/alumniOf.js";
 import addLifeEvent from "./add/lifeEvent.js";
 import addProject from "./add/project.js";
 import addHasCredential from "./add/hasCredential.js";
+import addKeywords from "./add/keywords.js";
 
 /**
  * CLI command for interactively adding a property to a Semantic‑CV document.
@@ -33,6 +34,7 @@ import addHasCredential from "./add/hasCredential.js";
  *   - alumniOf / education / school
  *   - lifeEvent
  *   - project
+ *   - keywords / keyword (on a work or project entry)
  *
  * Unknown property names are ignored with a console message.
  *
@@ -72,6 +74,9 @@ export const add = (propertyName: string, prompt?: IPrompt) => (person: any) => 
       return addLifeEvent(person, prompt);
     case "project":
       return addProject(person, prompt);
+    case "keyword":
+    case "keywords":
+      return addKeywords(person, prompt);
     default:
       console.info(`${propertyName} ignored.`);
       return person;
