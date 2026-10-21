@@ -99,4 +99,24 @@ describe("Render command", () => {
 
     assert.deepStrictEqual(fs.readdirSync(dir), []);
   });
+
+  it("rejects an unknown theme and lists the available ones without writing anything", async () => {
+    writeCv({});
+
+    await assert.rejects(renderFile(["render", "henrik.cv.json", file]), {
+      name: "KnownError",
+      message: /Unknown theme "henrik.cv.json". Available themes: .*minimal/
+    });
+
+    assert.deepStrictEqual(fs.readdirSync(dir), ["cv.json"]);
+  });
+
+  it("rejects an unknown theme named in the CV", async () => {
+    writeCv({ theme: "nonexistent" });
+
+    await assert.rejects(renderFile(["render", undefined, file]), {
+      name: "KnownError",
+      message: /Unknown theme "nonexistent"/
+    });
+  });
 });
