@@ -8,7 +8,7 @@ import normalize from "../dist/cli/normalize.js";
 import render from "../dist/cli/render.js";
 import watch from "../dist/cli/watch.js";
 import help from "../dist/cli/help.js";
-import handleError from "../dist/cli/error.js";
+import handleError, { KnownError } from "../dist/cli/error.js";
 
 const main = async () => {
   try {
@@ -39,12 +39,16 @@ const main = async () => {
       case "convert":
         await convert(args);
         return;
+      case undefined:
       case "-h":
       case "--help":
       case "help":
-      default:
         console.log(help);
         return;
+      default:
+        throw new KnownError(
+          `Unknown command "${command}". Run "semantic-cv help" to see the commands.`
+        );
     }
   } catch (err) {
     handleError(err);

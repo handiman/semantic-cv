@@ -33,6 +33,14 @@ describe("bin/cli", () => {
     });
   }
 
+  it("reports an unknown command and exits with 1 instead of printing the help", () => {
+    const { status, stdout, stderr } = run("frobnicate");
+
+    assert.strictEqual(status, 1);
+    assert.strictEqual(stdout, "");
+    assert.match(stderr, /Unknown command "frobnicate". Run "semantic-cv help"/);
+  });
+
   it("prints only the message of a KnownError and exits with 1", () => {
     const { status, stdout, stderr } = run("set", "nickname", "Henke");
 
