@@ -75,4 +75,32 @@ describe("Analyze command", () => {
     assert.match(stdout, /b\.cv\.json/);
     assert.doesNotMatch(stdout, /notes\.json/);
   });
+
+  it("exits with 0 when a file only has warnings", () => {
+    write("cv.json", { ...valid, sameAs: [] });
+
+    const { status, stdout } = analyze();
+
+    assert.match(stdout, /"sameAs":/);
+    assert.strictEqual(status, 0);
+  });
+
+  it("exits with 1 and says how many errors it found when a file has errors", () => {
+    write("cv.json", { "@type": "Person", name: "Yoda" });
+
+    const { status, stdout, stderr } = analyze();
+
+    assert.strictEqual(status, 1);
+    assert.match(stdout, /"jobTitle":/);
+    assert.match(stderr, /Found 3 errors/);
+  });
+
+  it("exits with 1 when any file below a directory has errors", () => {
+    write("cvs/a.cv.json", valid);
+    write("cvs/b.cv.json", { ...valid, name: undefined });
+
+    const { status } = analyze("cvs");
+
+    assert.strictEqual(status, 1);
+  });
 });

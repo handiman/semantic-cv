@@ -41,6 +41,19 @@ describe("bin/cli", () => {
     assert.match(stderr, /Unknown command "frobnicate". Run "semantic-cv help"/);
   });
 
+  for (const flag of ["-v", "--version"]) {
+    it(`prints the version from package.json and exits with 0 for "${flag}"`, () => {
+      const { version } = JSON.parse(
+        fs.readFileSync(path.join(bin, "..", "..", "package.json"), "utf8")
+      );
+
+      const { status, stdout } = run(flag);
+
+      assert.strictEqual(status, 0);
+      assert.strictEqual(stdout.trim(), version);
+    });
+  }
+
   it("prints only the message of a KnownError and exits with 1", () => {
     const { status, stdout, stderr } = run("set", "nickname", "Henke");
 

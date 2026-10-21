@@ -7,6 +7,7 @@ import convert from "../dist/cli/convert.js";
 import normalize from "../dist/cli/normalize.js";
 import render from "../dist/cli/render.js";
 import watch from "../dist/cli/watch.js";
+import version from "../dist/cli/version.js";
 import help from "../dist/cli/help.js";
 import handleError, { KnownError } from "../dist/cli/error.js";
 
@@ -38,6 +39,10 @@ const main = async () => {
         return;
       case "convert":
         await convert(args);
+        return;
+      case "-v":
+      case "--version":
+        await version(args);
         return;
       case undefined:
       case "-h":
