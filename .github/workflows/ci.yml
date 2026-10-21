@@ -20,12 +20,19 @@ permissions:
   contents: write
   id-token: write
 jobs:
+  # package.json promises Node >= 20, so the tests run on every supported major. Coverage and the
+  # release stay on 25.
   test:
+    name: test (node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [20, 22, 25]
     steps:
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 25
+          node-version: ${{ matrix.node }}
       - run: node -v
 
       - name: Checkout code
@@ -48,7 +55,7 @@ jobs:
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         if: always()
         with:
-          name: test-results
+          name: test-results-node-${{ matrix.node }}
           path: test-results.*
 
   # A separate job, so that the coverage limit is a check of its own that can be made required in
