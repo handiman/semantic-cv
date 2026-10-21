@@ -121,6 +121,8 @@ semantic-cv set name Yoda
 semantic-cv analyze <filename>
 ```
 
+The command exits with code 1 if it finds errors (warnings do not count), so it can gate a CI job.
+
 ### Continuous analysis
 
 ```sh

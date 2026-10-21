@@ -20,6 +20,7 @@ Commands:
   analyze [path=cv.json]
       Analyze CVs and report structural issues, missing fields and semantic inconsistencies.
       Path can be a file name or directory. Defaults to cv.json if omitted.
+      Exits with code 1 if any errors are found (warnings do not count).
 
   normalize [filename=cv.json]
       Automatically repair structural and semantic issues in a CV file.
@@ -36,6 +37,9 @@ Commands:
 
   help, -h --help
       Show this help text.
+
+  -v, --version
+      Show the installed version.
 
 Examples:
   semantic-cv init henrik.cv.json
