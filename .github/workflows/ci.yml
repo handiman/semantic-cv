@@ -238,7 +238,12 @@ jobs:
             if [ -z "$OLD_SHA" ] || [ "$OLD_SHA" = "$NEW_SHA" ]; then
               echo "_No changes_" >> CHANGELOG.md
             else
-              git -C $SUB log $OLD_SHA..$NEW_SHA --pretty=format:"- %s (%h)" >> CHANGELOG.md
+              # The previous pointer can be a commit that is on no branch any more (a squashed
+              # PR branch), so it is not in the clone; fetch it by hash.
+              git -C $SUB cat-file -e "$OLD_SHA^{commit}" 2>/dev/null || git -C $SUB fetch -q origin "$OLD_SHA" || true
+              if ! git -C $SUB log $OLD_SHA..$NEW_SHA --pretty=format:"- %s (%h)" >> CHANGELOG.md; then
+                echo "_Commit range not available_" >> CHANGELOG.md
+              fi
             fi
 
             echo "" >> CHANGELOG.md
