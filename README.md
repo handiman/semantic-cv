@@ -109,9 +109,42 @@ semantic-cv add alumniOf
 # Prompts for adding keywords (skills) to a work or project entry
 semantic-cv add keywords
 
+# Adds a project (a role in a Project instead of an Organization)
+semantic-cv add project
+
 # Sets a single value
 semantic-cv set name Yoda
 ```
+
+### `add` sections
+
+| Section (and aliases)                        | Adds                                    |
+| -------------------------------------------- | --------------------------------------- |
+| `worksFor`, `work`, `employer`, `employment` | A job, as a `Role` at an `Organization` |
+| `project`                                    | A project, as a `Role` in a `Project`   |
+| `keywords`, `keyword`                        | Keywords on a work or project entry     |
+| `alumniOf`, `education`, `school`            | Education                               |
+| `skills`, `skill`                            | Skills                                  |
+| `knowsAbout`, `competence`                   | Knowledge areas                         |
+| `knowsLanguage`, `language`                  | Languages                               |
+| `sameAs`                                     | A link to a profile elsewhere           |
+| `hasCertification`, `certification`, `cert`  | A certification                         |
+| `hasCredential`, `credential`                | A credential                            |
+| `lifeEvent`                                  | Awards, talks and other milestones      |
+
+Unknown sections are ignored. Every command normalizes the file before it saves it.
+
+### `set`
+
+`semantic-cv set <property> [value] [filename]` prompts for the value if you leave it out. It supports `name`, `jobTitle` (`title`), `description`, `email`, `telephone` (`phone`), `url` (`website`), `image`, `workLocation`, `nationality` and `theme`. Other properties are rejected and the file is left untouched.
+
+### Converting a JSON Resume
+
+```sh
+semantic-cv convert <filename|url> [output]
+```
+
+Converts a [JSON Resume](https://jsonresume.org) file, given as a path or a URL, to a Semantic‑CV file. It asks before overwriting an existing output file. Data with no schema.org equivalent is dropped. Other formats are rejected with "Unsupported format".
 
 ## Analysing JSON‑LD CVs
 
