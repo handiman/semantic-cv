@@ -206,23 +206,16 @@ jobs:
           AUTO: ${{ steps.auto.outputs.version }}
           LAST: ${{ steps.lasttag.outputs.tag }}
         run: |
-          npm install semver
           if [ -z "$LAST" ]; then LAST="v0.0.0"; fi
           LAST_VERSION=${LAST#v}
 
-          DECISION=$(node <<EOF
-            const semver = require('semver');
-            const pkg = "$PKG";
-            const auto = "$AUTO";
-            const last = "$LAST_VERSION";
-
-            if (semver.gt(pkg, last)) {
-              console.log(pkg); // manual override
-            } else {
-              console.log(auto); // auto bump
-            }
-          EOF
-          )
+          # A package.json version above the last tag is a manual override
+          HIGHEST=$(printf '%s %s' "$PKG" "$LAST_VERSION" | xargs -n1 | sort -V | tail -n 1)
+          if [ "$PKG" != "$LAST_VERSION" ] && [ "$HIGHEST" = "$PKG" ]; then
+            DECISION="$PKG"
+          else
+            DECISION="$AUTO"
+          fi
           echo "version=$DECISION" >> $GITHUB_OUTPUT
           echo "Next version will be: $DECISION"
 
@@ -312,8 +305,6 @@ jobs:
           git push origin "v$NEXT_VERSION"
 
       - name: Create GitHub Release
-        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
-        with:
-          tag: "v${{ needs.version.outputs.next_version }}"
-          artifacts: "*.tgz"
-          bodyFile: "CHANGELOG.md"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "v$NEXT_VERSION" *.tgz --verify-tag --notes-file CHANGELOG.md
