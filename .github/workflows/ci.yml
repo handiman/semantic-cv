@@ -41,7 +41,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          token: ${{ secrets.SUBMODULE_TOKEN }}
           submodules: recursive
           fetch-depth: 0
           fetch-tags: true
@@ -94,7 +93,6 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          token: ${{ secrets.SUBMODULE_TOKEN }}
           submodules: recursive
 
       - name: Build
@@ -129,7 +127,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          token: ${{ secrets.SUBMODULE_TOKEN }}
           submodules: recursive
           fetch-depth: 0
           fetch-tags: true
@@ -233,7 +230,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          token: ${{ secrets.SUBMODULE_TOKEN }}
           submodules: recursive
           fetch-depth: 0
           fetch-tags: true
@@ -308,7 +304,6 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1 # zizmor: ignore[artipacked] the tag push below uses these credentials
         with:
-          token: ${{ secrets.SUBMODULE_TOKEN }}
           submodules: recursive
           fetch-depth: 0
           fetch-tags: true
