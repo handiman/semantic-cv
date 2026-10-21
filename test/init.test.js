@@ -53,8 +53,7 @@ describe("Init", () => {
   });
 
   it("asks where to write when no file name is given", async () => {
-    // The seven profile answers, then the file name.
-    await init(["init"], new FakePrompt([...profile, file]));
+    await init(["init"], new FakePrompt([file, ...profile]));
 
     assert.strictEqual(JSON.parse(fs.readFileSync(file, "utf8")).name, "Yoda");
   });
@@ -62,15 +61,30 @@ describe("Init", () => {
   it("keeps an existing file when the user does not confirm the overwrite", async () => {
     fs.writeFileSync(file, '{"name":"Original"}');
 
-    await init(["init", file], new FakePrompt([...profile, "n"]));
+    await init(["init", file], new FakePrompt(["n", ...profile]));
 
     assert.strictEqual(fs.readFileSync(file, "utf8"), '{"name":"Original"}');
+  });
+
+  it("asks about the overwrite before the profile questions", async () => {
+    fs.writeFileSync(file, '{"name":"Original"}');
+    const asked = [];
+    const prompt = new FakePrompt(["n"]);
+    const ask = prompt.ask.bind(prompt);
+    prompt.ask = (question, defaultValue) => {
+      asked.push(question);
+      return ask(question, defaultValue);
+    };
+
+    await init(["init", file], prompt);
+
+    assert.deepStrictEqual(asked, [`${file} already exists. Overwrite it? (y/n)`]);
   });
 
   it("overwrites an existing file when the user confirms", async () => {
     fs.writeFileSync(file, '{"name":"Original"}');
 
-    await init(["init", file], new FakePrompt([...profile, "y"]));
+    await init(["init", file], new FakePrompt(["y", ...profile]));
 
     assert.strictEqual(JSON.parse(fs.readFileSync(file, "utf8")).name, "Yoda");
   });
