@@ -66,7 +66,7 @@ const telephone = (jsonresume: any) => (person: any) => ({
 
 const sameAs = (jsonresume: any) => (person: any) => ({
   ...person,
-  sameAs: (jsonresume.basics.profiles ?? []).map((profile: any) => profile.url)
+  sameAs: (jsonresume.basics?.profiles ?? []).map((profile: any) => profile.url)
 });
 
 const knowsLanguage = (jsonresume: any) => (person: any) => ({
