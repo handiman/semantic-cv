@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import http from "node:http";
+import path from "node:path";
 import { before, after, describe, it } from "node:test";
 import { convertHelper } from "./jsonResume.js";
 import jsonresume from "./jsonResume.json" with { type: "json" };
@@ -42,6 +43,12 @@ export default () => {
 
     it("can load from file", async () => {
       const fileName = "./test/convert/jsonResume/jsonResume.json";
+      const person = await convertHelper(fileName);
+      assert.strictEqual(person.name, "Henrik Becker");
+    });
+
+    it("can load from an absolute file path", async () => {
+      const fileName = path.resolve("./test/convert/jsonResume/jsonResume.json");
       const person = await convertHelper(fileName);
       assert.strictEqual(person.name, "Henrik Becker");
     });
