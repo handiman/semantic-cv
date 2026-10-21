@@ -13,6 +13,10 @@ async function copyFiltered(src, dest) {
     const srcPath = path.join(src, entry.name);
     const destPath = path.join(dest, entry.name);
 
+    if (entry.name === "node_modules") {
+      continue;
+    }
+
     if (entry.isDirectory()) {
       await copyFiltered(srcPath, destPath);
       continue;
