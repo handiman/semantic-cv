@@ -67,4 +67,34 @@ export default () => {
       });
     }
   });
+  describe("a resume without basics", () => {
+    let person;
+    beforeEach(async () => {
+      const { basics: _basics, ...withoutBasics } = jsonresume;
+      person = await convertHelper(withoutBasics);
+    });
+
+    test("is converted to a Person without the fields that come from basics", () => {
+      assert.strictEqual(person["@type"], "Person");
+      for (const field of [
+        "name",
+        "jobTitle",
+        "description",
+        "image",
+        "url",
+        "email",
+        "telephone"
+      ]) {
+        assert.strictEqual(person[field], undefined, field);
+      }
+      assert.deepStrictEqual(person.sameAs, []);
+    });
+
+    test("still converts the other sections", () => {
+      assert.deepStrictEqual(
+        person.knowsAbout,
+        jsonresume.skills.map((skill) => skill.name)
+      );
+    });
+  });
 };
