@@ -13,11 +13,11 @@ import pipe from "../core/pipe.js";
  * minimal, valid schema.org/Person JSON‑LD document to disk.
  *
  * Behavior:
- *   - Prompts for all primary Person fields.
  *   - Uses the provided filename or asks for one if omitted.
- *   - Normalizes the resulting Person object.
- *   - Writes the file if it does not exist.
- *   - If the file exists, asks for confirmation before overwriting.
+ *   - If the file exists, asks for confirmation before overwriting, before
+ *     any other question, so declining costs the user nothing.
+ *   - Prompts for all primary Person fields.
+ *   - Normalizes the resulting Person object and writes the file.
  *
  * After creation, a short “next steps” guide is printed to help users
  * validate, render, or watch their new CV.
@@ -27,6 +27,18 @@ import pipe from "../core/pipe.js";
  */
 export async function init(args: Array<string>, prompt: IPrompt = new Prompt()) {
   const ask = (question: string, defaultValue?: string) => prompt.ask(question, defaultValue);
+  const [, file] = args;
+  const fileName = file ?? (await ask("Write output to", defaults.fileName)) ?? "untitled";
+  const filePath = path.resolve(fileName);
+  if (
+    fs.existsSync(filePath) &&
+    "y" !== (await ask(`${fileName} already exists. Overwrite it? (y/n)`))
+  ) {
+    console.log("Aborted. File was not overwritten");
+    prompt.close();
+    return;
+  }
+
   const name = await ask("Your name");
   const jobTitle = await ask("Job title");
   const email = await ask("Email");
@@ -34,8 +46,6 @@ export async function init(args: Array<string>, prompt: IPrompt = new Prompt()) 
   const url = await ask("Web site url");
   const image = await ask("Image url");
   const description = await ask("Short description");
-  const [, file] = args;
-  let fileName = file ?? (await ask("Write output to", defaults.fileName)) ?? "untitled";
 
   const person = {
     "@context": "https://schema.org",
@@ -59,18 +69,7 @@ export async function init(args: Array<string>, prompt: IPrompt = new Prompt()) 
     lifeEvent: []
   };
 
-  const filePath = path.resolve(fileName);
-  const save = pipe(normalize, saveToFile(filePath));
-
-  if (!fs.existsSync(filePath)) {
-    save(person);
-  } else if ("y" === (await ask(`${fileName} already exists. Overwrite it? (y/n)`))) {
-    save(person);
-  } else {
-    console.log("Aborted. File was not overwritten");
-    prompt.close();
-    return;
-  }
+  pipe(normalize, saveToFile(filePath))(person);
 
   prompt.close();
 
