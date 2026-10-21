@@ -90,7 +90,7 @@ for you:
   deploying, creating a tag or release, publishing to npm, uploading build artifacts, or triggering the CI/CD
   workflow by hand. **A merge to `master` publishes a release to npm automatically** (`release` job in `ci.yml`).
 - **Never rebase or force-push an already-pushed branch.** Ask first if rebasing still seems right for some reason.
-- Treat edits to `.github/workflows/ci.yml` with care: it holds the npm publish, the tag push and `SUBMODULE_TOKEN`.
+- Treat edits to `.github/workflows/ci.yml` with care: it holds the npm publish and the tag push.
   Third-party actions are pinned by commit SHA — keep them pinned.
 
 ## Architectural Decision Records
