@@ -5,8 +5,6 @@ import path from "node:path";
 import { afterEach, beforeEach, describe, it } from "node:test";
 import { convert } from "../../dist/cli/convert.js";
 
-// Relative to the working directory (the repository root): on Windows an absolute path such as
-// "C:\x.json" is taken for a URL with the scheme "c:" and fetched.
 const jsonResumePath = "test/convert/jsonResume/jsonResume.json";
 const notJsonResumePath = "test/convert/notJsonResume.json";
 

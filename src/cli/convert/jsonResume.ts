@@ -6,8 +6,12 @@ import alumniOf from "./jsonResume/alumniOf.js";
 import hasCertification from "./jsonResume/hasCertification.js";
 import projects from "./jsonResume/projects.js";
 
+// A Windows path such as "C:\cv.json" parses as a URL with the scheme "c:", so only http(s) counts.
+const isHttpUrl = (source: any) =>
+  URL.canParse(source) && ["http:", "https:"].includes(new URL(source).protocol);
+
 const load = async (source: any) => {
-  if (URL.canParse(source)) {
+  if (isHttpUrl(source)) {
     const response = await fetch(source);
     return await response.json();
   } else if ("string" === typeof source) {
