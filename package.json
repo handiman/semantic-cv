@@ -31,12 +31,11 @@
     "sysinfo": "node scripts/generate-sysinfo.js",
     "build": "npm run clean && npm run lint && npm run sysinfo && tsc --project tsconfig.json && node scripts/copy-themes.js && node scripts/clean-dist.js",
     "pack": "npm run build && npm pack",
-    "test": "npm run clean && npm run build && npm run test:cli && npm run test:core && npm run test:themes && npm run test:results",
+    "test": "npm run clean && npm run build && npm run test:cli && npm run test:core && npm run test:themes",
     "test:cli": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=test-results.xml \"./test/**/*.test.js\"",
     "test:core": "npm --prefix ./src/core run test",
     "test:themes": "npm --prefix ./src/themes run test",
     "test:coverage": "npm --prefix ./src/core run build && npm --prefix ./src/themes run build && c8 node --test --test-reporter=spec \"./test/**/*.test.js\" \"./src/core/test/**/*.test.js\" \"./src/themes/test/**/*.test.js\"",
-    "test:results": "xunit-viewer -r test-results.xml -o test-results.html",
     "format": "prettier --write .",
     "lint": "eslint src/**/*.ts test/**/*.js",
     "lint:fix": "eslint --fix src/**/*.ts test/**/*.js"
@@ -74,8 +73,7 @@
     "prettier": "^3.8.2",
     "rimraf": "6.1.3",
     "tsx": "4.23.15",
-    "typescript": "6.0.3",
-    "xunit-viewer": "10.6.1"
+    "typescript": "6.0.3"
   },
   "dependencies": {
     "html-rewriter-wasm": "^0.4.1"
