@@ -240,44 +240,7 @@ jobs:
       - name: Generate changelog
         env:
           VERSION: ${{ needs.version.outputs.next_version }}
-        run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-
-          echo "# v$VERSION" > CHANGELOG.md
-          echo "" >> CHANGELOG.md
-
-          echo "## Main Repository" >> CHANGELOG.md
-          if [ -n "$LAST_TAG" ]; then
-            git log $LAST_TAG..HEAD --pretty=format:"- %s (%h)" >> CHANGELOG.md
-          else
-            git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
-          fi
-          echo "" >> CHANGELOG.md
-
-          for SUB in src/themes src/core; do
-            echo "## $SUB" >> CHANGELOG.md
-
-            if [ -n "$LAST_TAG" ]; then
-              OLD_SHA=$(git ls-tree $LAST_TAG $SUB | awk '{print $3}')
-            else
-              OLD_SHA=""
-            fi
-
-            NEW_SHA=$(git ls-tree HEAD $SUB | awk '{print $3}')
-
-            if [ -z "$OLD_SHA" ] || [ "$OLD_SHA" = "$NEW_SHA" ]; then
-              echo "_No changes_" >> CHANGELOG.md
-            else
-              # The previous pointer can be a commit that is on no branch any more (a squashed
-              # PR branch), so it is not in the clone; fetch it by hash.
-              git -C $SUB cat-file -e "$OLD_SHA^{commit}" 2>/dev/null || git -C $SUB fetch -q origin "$OLD_SHA" || true
-              if ! git -C $SUB log $OLD_SHA..$NEW_SHA --pretty=format:"- %s (%h)" >> CHANGELOG.md; then
-                echo "_Commit range not available_" >> CHANGELOG.md
-              fi
-            fi
-
-            echo "" >> CHANGELOG.md
-          done
+        run: node scripts/generate-changelog.js "$VERSION"
 
       - name: Upload changelog artifact
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
