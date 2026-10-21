@@ -54,9 +54,7 @@ jobs:
 
       - name: Run tests
         if: matrix.node != 20
-        run: |
-          npm install -g xunit-viewer
-          npm run test
+        run: npm run test
 
       - name: Smoke test
         if: matrix.node == 20
