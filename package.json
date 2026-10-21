@@ -28,7 +28,6 @@
   },
   "scripts": {
     "clean": "rimraf dist && npm --prefix ./src/core run clean && npm --prefix ./src/themes run clean",
-    "watch": "npm run build && jsonld-cv watch",
     "sysinfo": "node scripts/generate-sysinfo.js",
     "build": "npm run clean && npm run lint && npm run sysinfo && tsc --project tsconfig.json && node scripts/copy-themes.js && node scripts/clean-dist.js",
     "pack": "npm run build && npm pack",
