@@ -66,6 +66,7 @@ The owner is a senior .NET/C# developer and solutions architect, also senior in 
 - `npm ci && npm --prefix src/core ci && npm --prefix src/themes ci` – install (clone with `--recurse-submodules`)
 - `npm run build` – clean, lint, generate sysinfo, `tsc`, copy theme assets, prune `dist`
 - `npm test` – build, then CLI + core + themes tests, then the HTML test report (needs `xunit-viewer` globally)
+- `npm run test:coverage` – CLI + core + themes tests under c8 (after a build): console table, `coverage/coverage-final.json` and `coverage/index.html`; CI uploads `coverage/` as an artifact
 - `npm run test:cli` – only the CLI tests in `test/` (after a build)
 - `npm run lint` / `npm run lint:fix` – ESLint
 - `npm run format` – Prettier

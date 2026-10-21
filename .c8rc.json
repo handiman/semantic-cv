@@ -1,0 +1,12 @@
+{
+  "exclude": [
+    "**/*.d.ts",
+    "**/node_modules/**",
+    "test/**",
+    "**/test/**",
+    "**/*.generated.ts",
+    "scripts/**"
+  ],
+  "reporter": ["text", "json", "html"],
+  "reports-dir": "coverage"
+}
