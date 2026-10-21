@@ -33,6 +33,14 @@ describe("bin/cli", () => {
     });
   }
 
+  it("reports an unknown command and exits with 1 instead of printing the help", () => {
+    const { status, stdout, stderr } = run("frobnicate");
+
+    assert.strictEqual(status, 1);
+    assert.strictEqual(stdout, "");
+    assert.match(stderr, /Unknown command "frobnicate". Run "semantic-cv help"/);
+  });
+
   for (const flag of ["-v", "--version"]) {
     it(`prints the version from package.json and exits with 0 for "${flag}"`, () => {
       const { version } = JSON.parse(
