@@ -33,7 +33,7 @@ export async function renderFile(args: Array<string>) {
   const [, themeId, file] = args;
   const fileName = file ?? defaults.fileName;
   const person = loadPerson(file ?? defaults.fileName);
-  const resolvedThemeId = assertKnownTheme(getThemeId(themeId, person));
+  const resolvedThemeId = resolveTheme(getThemeId(themeId, person));
   const html = async () => {
     const transformer = new NodeTransformer().on("head", {
       element(head: any) {
@@ -150,14 +150,15 @@ const getThemeId = (themeId: string | null | undefined, person: any) => {
   return undefined;
 };
 
-const assertKnownTheme = (themeId: string | undefined) => {
+const resolveTheme = (themeId: string | undefined) => {
   if (themeId === undefined) {
     return defaults.theme;
   }
   if (Object.hasOwn(ThemeRegistry, themeId)) {
     return themeId;
   }
-  throw new KnownError(
-    `Unknown theme "${themeId}". Available themes: ${Object.keys(ThemeRegistry).join(", ")}`
+  console.warn(
+    `Unknown theme "${themeId}", using "${defaults.theme}". Available themes: ${Object.keys(ThemeRegistry).join(", ")}`
   );
+  return defaults.theme;
 };

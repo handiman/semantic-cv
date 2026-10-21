@@ -100,23 +100,35 @@ describe("Render command", () => {
     assert.deepStrictEqual(fs.readdirSync(dir), []);
   });
 
-  it("rejects an unknown theme and lists the available ones without writing anything", async () => {
+  it("warns about an unknown theme, lists the available ones and renders with minimal", async (t) => {
     writeCv({});
+    const warn = t.mock.method(console, "warn", () => {});
 
-    await assert.rejects(renderFile(["render", "henrik.cv.json", file]), {
-      name: "KnownError",
-      message: /Unknown theme "henrik.cv.json". Available themes: .*minimal/
-    });
+    await renderFile(["render", "henrik.cv.json", file]);
 
-    assert.deepStrictEqual(fs.readdirSync(dir), ["cv.json"]);
+    assert.match(
+      warn.mock.calls[0].arguments[0],
+      /Unknown theme "henrik.cv.json", using "minimal". Available themes: .*typewriter/
+    );
+    const html = fs.readFileSync(`${file}.html`, "utf8");
+    assert.ok(html.includes('<meta name="semanticcv:theme" content="minimal"'));
   });
 
-  it("rejects an unknown theme named in the CV", async () => {
+  it("warns about an unknown theme named in the CV", async (t) => {
     writeCv({ theme: "nonexistent" });
+    const warn = t.mock.method(console, "warn", () => {});
 
-    await assert.rejects(renderFile(["render", undefined, file]), {
-      name: "KnownError",
-      message: /Unknown theme "nonexistent"/
-    });
+    await renderFile(["render", undefined, file]);
+
+    assert.match(warn.mock.calls[0].arguments[0], /Unknown theme "nonexistent"/);
+  });
+
+  it("does not warn about a known theme", async (t) => {
+    writeCv({ theme: "typewriter" });
+    const warn = t.mock.method(console, "warn", () => {});
+
+    await renderFile(["render", undefined, file]);
+
+    assert.strictEqual(warn.mock.callCount(), 0);
   });
 });
