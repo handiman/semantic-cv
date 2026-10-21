@@ -1,6 +1,6 @@
 # CLI
 
-One file per command (`init`, `add`, `set`, `analyze`, `normalize`, `render`, `watch`, `convert`, `help`).
+One file per command (`init`, `add`, `set`, `analyze`, `normalize`, `render`, `watch`, `convert`, `version`, `help`).
 [bin/cli](../../bin/cli) imports the compiled `dist/cli/<command>.js` and dispatches on the first argument, so a new
 command needs three things: the module here, a `case` in `bin/cli`, and an entry in [help.ts](help.ts) (and the
 README's usage list).

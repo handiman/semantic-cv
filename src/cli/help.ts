@@ -37,6 +37,9 @@ Commands:
   help, -h --help
       Show this help text.
 
+  -v, --version
+      Show the installed version.
+
 Examples:
   semantic-cv init henrik.cv.json
   semantic-cv set name "Henrik Becker" henrik.cv.json
