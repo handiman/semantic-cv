@@ -9,6 +9,7 @@ import { Writable } from "node:stream";
 import { HTMLTransformer } from "../core/transform.js";
 import { HTMLRewriter } from "html-rewriter-wasm";
 import { ThemeLoader } from "../themes/index.js";
+import { ThemeRegistry } from "../themes/themeRegistry.js";
 import normalize from "../core/normalize.js";
 import { KnownError } from "./error.js";
 
@@ -32,6 +33,7 @@ export async function renderFile(args: Array<string>) {
   const [, themeId, file] = args;
   const fileName = file ?? defaults.fileName;
   const person = loadPerson(file ?? defaults.fileName);
+  const resolvedThemeId = resolveTheme(getThemeId(themeId, person));
   const html = async () => {
     const transformer = new NodeTransformer().on("head", {
       element(head: any) {
@@ -42,7 +44,7 @@ export async function renderFile(args: Array<string>) {
       }
     });
     const loader = new ThemeLoader(transformer, loadAsset);
-    const theme = loader.loadTheme(getThemeId(themeId, person));
+    const theme = loader.loadTheme(resolvedThemeId);
     const rendered = await renderHTML({
       person,
       theme,
@@ -146,4 +148,17 @@ const getThemeId = (themeId: string | null | undefined, person: any) => {
     return person.theme.name ?? person.theme;
   }
   return undefined;
+};
+
+const resolveTheme = (themeId: string | undefined) => {
+  if (themeId === undefined) {
+    return defaults.theme;
+  }
+  if (Object.hasOwn(ThemeRegistry, themeId)) {
+    return themeId;
+  }
+  console.warn(
+    `Unknown theme "${themeId}", using "${defaults.theme}". Available themes: ${Object.keys(ThemeRegistry).join(", ")}`
+  );
+  return defaults.theme;
 };
