@@ -20,8 +20,9 @@ permissions:
   contents: write
   id-token: write
 jobs:
-  # package.json promises Node >= 20, so the tests run on every supported major. Coverage and the
-  # release stay on 25.
+  # package.json promises Node >= 20, so every supported major is exercised. `node --test` only
+  # expands globs from Node 21, so the test scripts can't run on 20: there the CLI is built and
+  # smoke-tested instead. Coverage and the release stay on 25.
   test:
     name: test (node ${{ matrix.node }})
     runs-on: ubuntu-latest
@@ -43,17 +44,31 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      - name: Install
+        run: npm ci
+
       - name: Run tests
+        if: matrix.node != 20
         run: |
-          npm ci
           npm install -g xunit-viewer jsdom
           npm run test
+
+      - name: Smoke test
+        if: matrix.node == 20
+        run: |
+          npm run build
+          mkdir smoke && cp sample.cv.json smoke/cv.json && cd smoke
+          node ../bin/cli --version
+          node ../bin/cli analyze
+          node ../bin/cli normalize
+          node ../bin/cli render minimal
+          test -s cv.json.html && test -s cv.json.txt
 
       - name: Lint
         run: npm run lint
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: always()
+        if: always() && matrix.node != 20
         with:
           name: test-results-node-${{ matrix.node }}
           path: test-results.*
