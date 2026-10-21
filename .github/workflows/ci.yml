@@ -45,13 +45,17 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
+      # The submodules' tests need their own devDependencies (jsdom, fast-check).
       - name: Install
-        run: npm ci
+        run: |
+          npm ci
+          npm --prefix src/core ci
+          npm --prefix src/themes ci
 
       - name: Run tests
         if: matrix.node != 20
         run: |
-          npm install -g xunit-viewer jsdom
+          npm install -g xunit-viewer
           npm run test
 
       - name: Smoke test
@@ -98,6 +102,8 @@ jobs:
       - name: Build
         run: |
           npm ci
+          npm --prefix src/core ci
+          npm --prefix src/themes ci
           npm run build
 
       - name: Code coverage
