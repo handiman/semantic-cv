@@ -1,8 +1,13 @@
 # Semantic-CV - a schema.org/Person based CV Generator
 
-[![semantic.cv security grade from Mozilla HTTP Observatory](https://img.shields.io/mozilla-observatory/grade/semantic.cv?label=semantic.cv%20security)](https://developer.mozilla.org/en-US/observatory/analyze?host=semantic.cv)
-
 <img src="https://assets.semantic.cv/semantikitten-scholar.png" alt="Artistic Semantikitten" height="100" align="right" style="margin-left: 20px;" />
+
+[![CI](https://github.com/handiman/semantic-cv/actions/workflows/ci.yml/badge.svg)](https://github.com/handiman/semantic-cv/actions/workflows/ci.yml)
+[![npm](https://img.shields.io/npm/v/semantic-cv)](https://www.npmjs.com/package/semantic-cv)
+[![node](https://img.shields.io/node/v/semantic-cv)](https://www.npmjs.com/package/semantic-cv)
+[![License](https://img.shields.io/github/license/handiman/semantic-cv)](LICENSE)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/handiman/semantic-cv/badge)](https://scorecard.dev/viewer/?uri=github.com/handiman/semantic-cv)
+[![semantic.cv security grade from Mozilla HTTP Observatory](https://img.shields.io/mozilla-observatory/grade/semantic.cv?label=semantic.cv%20security)](https://developer.mozilla.org/en-US/observatory/analyze?host=semantic.cv)
 
 Semantic‑CV is a minimal, idiomatic convention for expressing CV data using the global standard [schema.org/Person](https://schema.org/Person).
 It does not introduce a new schema. Instead, it applies existing fields consistently and adds only a few carefully chosen extensions.
