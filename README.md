@@ -209,6 +209,33 @@ semantic-cv render <theme> [filename=cv.json]
 Renders your CV using the selected theme.
 If no filename is provided, cv.json in the current directory is used
 
+### Language and headings
+
+The headings follow the language of your CV. Give it in `@context`, the JSON-LD way:
+
+```json
+"@context": ["https://schema.org", { "@language": "sv" }]
+```
+
+Swedish (`sv`, `sv-SE`, …) gets Swedish headings; any other language, or none, gets English. The language also ends
+up as `<html lang>` on the rendered page.
+
+To use your own headings or labels, give your theme as an object and add the ones you want to change. Those you leave
+out follow the language of your CV:
+
+```json
+"theme": {
+  "@type": "Theme",
+  "name": "lena",
+  "headings": { "worksFor": "Uppdrag", "skills": "Verktyg" },
+  "labels": { "present": "nu" }
+}
+```
+
+The headings are `contact`, `description`, `knowsLanguage`, `knowsAbout`, `skills`, `certifications`, `worksFor`,
+`alumniOf`, `projects` and `lifeEvent`; the only label is `present`, shown instead of an end date for a role that hasn't
+ended. `semantic-cv analyze` warns about any other key.
+
 ## Conventions by CV Area
 
 Conventions for each CV area — including recommended fields, ordering rules, and semantic patterns — are documented in the dedicated reference:

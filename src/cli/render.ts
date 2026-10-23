@@ -8,7 +8,9 @@ import { renderHTML } from "../core/render/html.js";
 import { Writable } from "node:stream";
 import { HTMLTransformer } from "../core/transform.js";
 import { HTMLRewriter } from "html-rewriter-wasm";
-import { ThemeLoader } from "../themes/index.js";
+import { ThemeLoader, themeOptionsFor } from "../themes/index.js";
+import { languageOf } from "../core/language.js";
+import { themeOptionsOf } from "../core/themeOptions.js";
 import { ThemeRegistry } from "../themes/themeRegistry.js";
 import normalize from "../core/normalize.js";
 import { KnownError } from "./error.js";
@@ -44,7 +46,10 @@ export async function renderFile(args: Array<string>) {
       }
     });
     const loader = new ThemeLoader(transformer, loadAsset);
-    const theme = loader.loadTheme(resolvedThemeId);
+    // Headings in the CV's language (Swedish or English), with the CV's own headings and labels
+    // from its theme object on top.
+    const options = themeOptionsFor(languageOf(person), themeOptionsOf(person));
+    const theme = loader.loadTheme(resolvedThemeId, options);
     const rendered = await renderHTML({
       person,
       theme,
