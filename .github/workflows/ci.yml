@@ -307,4 +307,4 @@ jobs:
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "v$NEXT_VERSION" *.tgz --verify-tag --notes-file CHANGELOG.md
+        run: gh release create "v$NEXT_VERSION" *.tgz --verify-tag --title "v$NEXT_VERSION" --notes-file CHANGELOG.md
